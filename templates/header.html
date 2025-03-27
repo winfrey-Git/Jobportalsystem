@@ -1,0 +1,77 @@
+<header>
+  {% load static %}
+  <nav class="navbar navbar-expand-lg navbar-light bg-light py-3">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+        <img src="{% static 'images/logo.png' %}" alt="logo" class="logo img-fluid" style="max-width: 120px;">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item px-3">
+            <a class="nav-link text-dark" href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item px-3">
+            <a class="nav-link text-dark" href="{% url 'job_list' %}">Job Listing</a>
+          </li>
+          <li class="nav-item px-3">
+            <a class="nav-link text-dark" href="{% url 'about' %}">About Us</a>
+          </li>
+          <li class="nav-item px-3">
+            <a class="nav-link text-dark" href="{% url 'contact' %}">Contact</a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ms-auto d-flex align-items-center">
+          {% if user.is_authenticated %}
+            {% if user.role == "employer" %}
+              <li class="nav-item px-2">
+                <a class="nav-link text-dark" href="{% url 'employer_dashboard' %}">
+                  <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+              </li>
+              <li class="nav-item px-2">
+                <a class="nav-link text-dark" href="{% url 'view_employer_profile' %}">
+                  <i class="fas fa-user-circle"></i> Profile
+                </a>
+              </li>
+            {% elif user.role == "employee" %}
+              <li class="nav-item px-2">
+                <a class="nav-link text-dark" href="{% url 'jobseeker_dashboard' %}">
+                  <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+              </li>
+              <li class="nav-item px-2">
+                <a class="nav-link text-dark" href="{% url 'view_profile' %}">
+                  <i class="fas fa-user-circle"></i> Profile
+                </a>
+              </li>
+            {% endif %}
+
+            <li class="nav-item px-2">
+              <a class="btn btn-danger text-white" href="{% url 'logout' %}">Logout</a>
+            </li>
+
+          {% else %}
+            <li class="nav-item px-2">
+              <a class="btn btn-light text-success me-2" href="{% url 'login' %}">Login</a>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="btn btn-warning text-dark dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown">
+                Sign Up
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'jobseeker_register' %}">Job Seeker Signup</a></li>
+                <li><a class="dropdown-item" href="{% url 'employer_registration' %}">Employer Signup</a></li>
+              </ul>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4>Application Details</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="mb-3">Applicant Information</h5>
+            <p><strong>Name:</strong> {{ application.applicant.get_full_name }}</p>
+            <p><strong>Email:</strong> {{ application.applicant.email }}</p>
+            <p><strong>Applied For:</strong> {{ application.job.title }}</p>
+            <p><strong>Application Date:</strong> {{ application.created_at }}</p>
+            <p><strong>Status:</strong> <span class="badge bg-info">{{ application.status }}</span></p>
+
+            <hr>
+
+            <h5 class="mb-3">Documents</h5>
+            {% if application.resume and application.resume.resume %}
+                <p><strong>Resume:</strong> <a href="{{ application.resume.resume.url }}" target="_blank" class="btn btn-sm btn-success">View Resume</a></p>
+            {% else %}
+                <p class="text-danger">No resume uploaded.</p>
+            {% endif %}
+
+            {% if application.cover_letter %}
+                <p><strong>Cover Letter:</strong> {{ application.cover_letter }}</p>
+            {% else %}
+                <p class="text-danger">No cover letter provided.</p>
+            {% endif %}
+
+            <hr>
+
+            <h5 class="mb-3">Interview Details</h5>
+            <p><strong>Interview Scheduled:</strong> {% if application.interview_date %} 📅 {{ application.interview_date }} {% else %} Not Scheduled {% endif %}</p>
+
+            <div class="mt-3">
+                <a href="{% url 'employer_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+                {% if application.status == "pending" %}
+                    <a href="{% url 'update_application_status' application.id 'accepted' %}" class="btn btn-success">Accept</a>
+                    <a href="{% url 'update_application_status' application.id 'rejected' %}" class="btn btn-danger">Reject</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

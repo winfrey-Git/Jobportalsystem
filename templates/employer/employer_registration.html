@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Home -->
+<section class="section-hero overlay inner-page bg-image"
+    style="background-image:url('{% static 'images/background.jpg' %}');" id="home-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h1 class="text-white font-weight-bold">Employer/Sign Up</h1>
+                <div class="custom-breadcrumbs">
+                    <a href="{% url 'home' %}">Home</a><span class="mx-2 slash">/</span>
+                    <span class="text-white"><strong>Sign Up</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-site">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mb-5">
+                <h2 class="mb-4 text-center text-warning">Sign up to Job Portal</h2>
+                {% include 'messages.html' %}
+
+                {% if form.errors %}
+                {% for field in form %}
+                {% for error in field.errors %}
+                <div class="alert alert-danger alert-dismissable">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>{{ field.label }} {{ error|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-danger alert-dismissable">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>{{ error|escape }}</strong>               
+                 </div>
+                 {% endfor %}
+                 {% endif %}
+
+                 <form method="POST" action="" class="p-4 border rounded" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- User Fields -->
+                    <h3 class="text-dark mt-4">Personal Details</h3>
+                    {% for field in form %}
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-dark" for="id_{{ field.name }}">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type }}" class="form-control" name="{{ field.name }}" 
+                            id="id_{{ field.name }}" 
+                            {% if field.name == "password1" %} placeholder="Enter Password" {% endif %}
+                            {% if field.name == "password2" %} placeholder="Confirm Password" {% endif %}
+                            {% if field.field.widget.attrs.placeholder %} placeholder="{{ field.field.widget.attrs.placeholder }}" {% endif %}>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Company Details -->
+                    <h3 class="text-dark mt-4">Company Details</h3>
+
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12">
+                            <label class="text-dark" for="company_name">Company Name</label>
+                            <input type="text" class="form-control" name="company_name" id="company_name" placeholder="Enter company name">
+                        </div>
+                    </div>
+
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12">
+                            <label class="text-dark" for="company_address">Company Address</label>
+                            <input type="text" class="form-control" name="company_address" id="company_address" placeholder="Enter company address">
+                        </div>
+                    </div>
+
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12">
+                            <label class="text-dark" for="industry">Industry</label>
+                            <input type="text" class="form-control" name="industry" id="industry" placeholder="Enter industry sector">
+                        </div>
+                    </div>
+
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12">
+                            <label class="text-dark" for="company_description">Company Description</label>
+                            <textarea class="form-control" name="company_description" id="company_description" placeholder="Briefly describe your company"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12">
+                            <label class="text-dark" for="company_logo">Company Logo</label>
+                            <input type="file" class="form-control-file" name="company_logo" id="company_logo">
+                        </div>
+                    </div>
+
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12">
+                            <label class="text-dark" for="contact_email">Contact Email</label>
+                            <input type="email" class="form-control" name="contact_email" id="contact_email" placeholder="Enter contact email">
+                        </div>
+                    </div>
+
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12">
+                            <label class="text-dark" for="contact_phone">Contact Phone</label>
+                            <input type="text" class="form-control" name="contact_phone" id="contact_phone" placeholder="Enter contact phone">
+                        </div>
+                    </div>
+
+                    <div class="row form-group mb-4">
+                        <div class="col-md-12">
+                            <label class="text-dark" for="website">Website (Optional)</label>
+                            <input type="url" class="form-control" name="website" id="website" placeholder="Enter company website">
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <input type="submit" value="Sign Up" class="btn px-4 btn-success text-white">
+                        </div>
+                    </div>
+                 </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

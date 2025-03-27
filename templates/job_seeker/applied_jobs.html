@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %} Applied Jobs {% endblock %}
+
+{% block content %} 
+<h4> Appllied Jobs </h4>
+<ul class="list-group">
+    {% for job in applied_jobs %}
+    <li class="list-group-item d-flex jusify-content-between align-items-center">
+        {{ job.title }} - {{ job.status }}
+        <span class="badge bg-info">{{ job.applicattion_date|date:"M d, Y" }}</span>
+    </li>
+    {% empty %}
+    <p>No Job applications yet.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

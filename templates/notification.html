@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<h1>Notifications</h1>
+<ul class="list-group">
+    {% for notification in notifications %}
+    <li class="list-group-item">
+        {{ notification.message }} <small class="text-muted">{{ notification.date|date:"M d, Y"}}</small>
+    </li>
+    {% empty %}
+    <p>No notifications available.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

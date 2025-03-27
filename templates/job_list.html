@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Find Your Dream Job</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Jobs</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="site-section bg-light" id="job-listings">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="text-dark">Browse Jobs</h2>
+      <p class="text-muted">Find a job that matches your skills and interests.</p>
+    </div>
+
+    <div class="row">
+      {% if page_obj.object_list %}
+        {% for job in page_obj.object_list %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="job-item p-4 border rounded bg-white shadow-sm text-center">
+            {% if job.company and job.company.company_logo %}
+            <div class="mb-3">
+              <img src="{{ job.company.company_logo.url }}" alt="{{ job.company.name }} Logo" class="img-fluid rounded-circle" style="max-width: 100px; height: auto;">
+            </div>
+            {% endif %}
+          
+
+            <h4 class="text-success">{{ job.title }}</h4>
+
+            <div class="d-flex justify-content-center gap-2 mb-2">
+              {% if job.type|lower == "full time" %}
+                <span class="badge bg-success p-2">Full Time</span>
+              {% elif job.type|lower == "part time" %}
+                <span class="badge bg-danger p-2">Part Time</span>
+              {% elif job.type|lower == "internship" %}
+                <span class="badge bg-info p-2">Internship</span>
+              {% endif %}
+              <span class="badge bg-secondary p-2">{{ job.location }}</span>
+            </div>
+
+            <div class="d-flex justify-content-center">
+              <span class="fw-semibold text-muted">Deadline:</span> 
+              <span class="text-muted ms-1">{{ job.deadline_date|date:"M d, Y" }}</span>
+            </div>
+
+            <p class="text-muted small">{{ job.description|striptags|truncatechars:100 }}</p>
+
+            {# Redirects to the Single Job Page without Apply Button #}
+            <a href="{% url 'single_job' job.id %}" class="btn btn-outline-success btn-sm w-100">
+              <i class="fas fa-eye"></i> View Details
+            </a>
+
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-center text-muted w-100">No jobs found at the moment. Please check back later.</p>
+      {% endif %}
+    </div>
+
+    {% include 'paginator.html' %}
+  </div>
+</section>
+
+{% endblock content %}

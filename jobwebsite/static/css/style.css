@@ -1,0 +1,33 @@
+.container-fluid {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+
+.row {
+  margin: 0;
+}
+
+
+
+
+.job-listing-location span {
+    color: #333;
+  }
+  
+  .job-listing-meta .badge {
+    font-size: 0.85rem;
+  }
+
+.about-image {
+    max-width: 80%; 
+    height: auto; 
+    margin-bottom: 20px; 
+}
+.contact-img {
+  max-width: 100%; 
+  height: auto;  
+  border-radius: 10px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  object-fit: cover;  
+}

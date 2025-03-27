@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Resumes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Search Resumes</h2>
+
+  
+    <form method="get" action="{% url 'search_resume' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="q" placeholder="Search by name, email, role, or skills" value="{{ query }}">
+            <button type="submit" class="btn btn-success">Search</button>
+        </div>
+    </form>
+
+  
+    {% if results %}
+        <h5 class="mt-4">{{ results|length }} result(s) found:</h5>
+        <ul class="list-group mt-3">
+            {% for profile in results %}
+                <li class="list-group-item">
+                    <h5>{{ profile.user.first_name }} {{ profile.user.last_name }}</h5>
+                    <p>Email: {{ profile.user.email }}</p>
+                    <p>Role: {{ profile.user.role }}</p>
+                    <p>Skills: {{ profile.skill_set }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No matching resumes found.</p>
+    {% endif %}
+</div>
+{% endblock %}

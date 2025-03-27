@@ -1,0 +1,59 @@
+{% if jobs %}
+    {% for job in jobs %}
+        <h4 class="mt-4">{{ job.title }}</h4>
+        {% with job.application.all as applications %}  <!-- Use 'application' instead of 'application_set' -->
+            <p>Total Applications: {{ applications|length }}</p>
+            {% if applications %}
+                <table class="table table-bordered table-hover mt-3">
+                    <thead class="bg-success text-white">
+                        <tr>
+                            <th>#</th>
+                            <th>Applicant Name</th>
+                            <th>Email</th>
+                            <th>Resume</th>
+                            <th>Application Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for application in applications %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ application.applicant.get_full_name }}</td>
+                            <td>{{ application.applicant.email }}</td>
+                            <td>
+                                {% if application.resume and application.resume.resume %}
+                                    <a href="{{ application.resume.resume.url }}" class="btn btn-sm btn-primary" target="_blank">Download</a>
+                                {% else %}
+                                    No Resume
+                                {% endif %}
+                            </td>
+                            <td>{{ application.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="badge 
+                                {% if application.status == 'pending' %}bg-warning text-dark
+                                {% elif application.status == 'shortlisted' %}bg-success
+                                {% elif application.status == 'interview_scheduled' %}bg-info
+                                {% elif application.status == 'hired' %}bg-primary
+                                {% elif application.status == 'approved' %}bg-success
+                                {% else %}bg-danger{% endif %}">
+                                {{ application.status|title }}
+                            </span>
+                            
+                            </td>
+                            <td>
+                                <a href="{% url 'application_detail' application.id %}" class="btn btn-sm btn-info">View Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info">No applications received for this job yet.</div>
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+{% else %}
+    <div class="alert alert-warning">No jobs with applications found.</div>
+{% endif %}

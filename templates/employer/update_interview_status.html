@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Update Interview Status</h2>
+
+<p>Interview for {{ interview.application.applicant.get_full_name }} - {{ interview.application.job.title }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Update Status</button>
+</form>
+
+<a href="{% url 'candidate_management' %}" class="btn btn-secondary">Back</a>
+{% endblock %}

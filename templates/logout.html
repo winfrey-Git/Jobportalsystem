@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+<section class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+  <div class="card shadow-lg p-5 col-md-6 col-lg-4 text-center">
+    <div class="card-body">
+                                                                                                                                                                                                                                                                                                                                                                                                                                            
+      <h1 class="text-success mb-4">Logged Out</h1>
+      <p class="mb-4 text-muted">You have been logged out successfully.</p>
+      <a href="{% url 'login' %}" class="btn btn-primary w-100">Login Again</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

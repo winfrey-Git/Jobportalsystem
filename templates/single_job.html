@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+<section class="section-hero overlay inner-page bg-image"
+  style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h2 class="text-white font-weight-bold">{{ job.title }}</h2>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <a href="{% url 'job_list' %}" class="text-success">Jobs</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>{{ job.title }}</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="site-section mt-5">
+  <div class="container">
+    {% include 'messages.html' %}
+    <div class="row align-items-center mb-5">
+      <div class="col-lg-8 mb-4 mb-lg-0">
+        <div class="d-flex align-items-center">
+          <div class="border p-2 d-inline-block mr-3 rounded">
+            {% if company.company_logo %}
+            <img src="{{ company.company_logo.url }}" alt="{{ company.name }} Logo" class="img-fluid" style="max-height: 80px;">
+            {% else %}
+              <img src="{% static 'images/default-logo.png' %}" alt="Default Company Logo" class="img-fluid" style="max-height: 80px;">
+            {% endif %}
+          </div>
+          <div>
+            <h3>{{ job.title }}</h3>
+            <div>
+              <span class="m-2 text-success"><i class="fas fa-briefcase mr-2"></i>{{ company.company_name }}</span>
+              <span class="m-2"><i class="fas fa-map-marker-alt mr-2"></i>{{ job.location }}</span>
+              <span class="m-2"><i class="fas fa-clock mr-2"></i></span>
+                <span class="text-success">
+                  {% if job.type == 'full time' %} Full Time
+                  {% elif job.type == 'part time' %} Part Time
+                  {% else %} Internship {% endif %}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="row">
+            <div class="col-6">
+                {% if user.is_authenticated and user.role == 'employee' %}
+                {% is_job_already_saved request.user job as is_saved %}
+                <form action="{% url 'save_job' job.id %}" method="POST">
+                    {% csrf_token %}
+                    {% if is_saved %}
+                        <button type="submit" class="btn btn-danger btn-md">Remove</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-success btn-md">Save Job</button>
+                    {% endif %}
+                </form>
+              {% endif %}
+            </div>
+          <div class="col-6">
+            {% if user.is_authenticated and user.role == 'employee' %}
+            {% is_job_already_applied request.user job as is_applied %}
+            {% if is_applied %}
+                <a href="{% url 'jobseeker_dashboard' %}" class="btn btn-block btn-danger btn-md">Already Applied</a>
+            {% else %}
+                <form action="{% url 'apply' job.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-block btn-primary btn-md">Apply Now</button>
+                </form>
+            {% endif %}
+            {% endif %}        
+          </div>
+        
+          <div class="col-12 mt-2">
+            {% if request.user.id == job.user.id and user.role == 'employer' %}
+            <a href="{% url 'edit_job' job.id %}" class="btn btn-block btn-success btn-md">Edit</a>
+            <a href="{% url 'delete_job' job.id %}" class="btn btn-block btn-danger btn-md">Delete</a>
+              <a href="{% url 'job_posting' %}" class="btn btn-block btn-primary btn-md">Publish Your Job</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="mb-5">
+          <h3 class="h5 text-success">Job Description</h3>
+          <p>{{ job.description|safe }}</p>
+          <h3 class="h5 text-success">Responsibilities</h3>
+          <p>{{ job.responsibilities|safe }}</p>
+          <h3 class="h5 text-success">Requirements</h3>
+          <p>{{ job.requirements|safe }}</p>
+        </div>
+    
+        <!-- Add Company Details Here -->
+        <div class="mb-5">
+          <h3 class="h5 text-success">About {{ company.company_name }}</h3>
+          <p>{{ company.company_description|safe }}</p>
+          <p><strong>Industry:</strong> {{ company.industry }}</p>
+          <p><strong>Website:</strong> <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></p>
+          <p><strong>Contact Email:</strong> <a href="mailto:{{ company.email }}">{{ company.contact_email }}</a></p>
+          <p><strong>Contact Number:</strong> {{ company.contact_phone }}</p>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="bg-light p-3 border rounded mb-4">
+          <h3 class="text-success h5">Job Summary</h3>
+          <ul class="list-unstyled">
+            <li><strong>Posted on:</strong> {{ job.posted_date|date:"d M Y" }}</li>
+            <li><strong>Employment Type:</strong> 
+              {% if job.type == 'full time' %} Full Time 
+              {% elif job.type == 'part time' %} Part Time 
+              {% else %} Internship {% endif %}
+            </li>
+            <li><strong>Job Location:</strong> {{ job.location }}</li>
+            <li><strong>Salary:</strong> {{ job.salary }}</li>
+            <li><strong>Application Deadline:</strong> {{ job.deadline_date|date:"d M Y" }}</li>
+          </ul>
+        </div>
+
+
+        <div class="bg-light p-3 border rounded">
+            <h3 class="text-success mt-3 h5 pl-3 mb-3">Share</h3>
+            <div class="footer-social d-flex gap-3 px-3">
+              <a href="#" class="text-dark"><i class="fab fa-facebook fa-lg"></i></a>
+              <a href="#" class="text-dark"><i class="fab fa-twitter fa-lg"></i></a>
+              <a href="#" class="text-dark"><i class="fab fa-linkedin fa-lg"></i></a>
+              <a href="#" class="text-dark"><i class="fab fa-pinterest fa-lg"></i></a>
+            </div>
+          </div>
+                  
+          
+      </div>
+    </div>
+  </div>
+</section>
+{% if page_obj %}
+
+<section class="site-section" id="next">
+  <div class="container">
+    <div class="row mb-5 justify-content-center">
+      <div class="col-md-7 text-center">
+        <h2 class="section-title mb-2">{{ total }} Related Jobs</h2>
+      </div>
+    </div>
+    <ul class="job-listings mb-5">
+      {% for job in page_obj %}
+      <li class="job-listing d-block d-sm-flex pb-3 pb-sm-0 align-items-center">
+        <a href="{% url 'single_job' job.id %}"></a>
+        <div class="job-listing-logo">
+          <img src="{% static 'images/i.jpg' %}" alt="Image" class="img-fluid">
+        </div>
+        <div class="job-listing-about d-sm-flex custom-width w-100 justify-content-between mx-4">
+          <div class="job-listing-position custom-width w-50 mb-3 mb-sm-0">
+            <h2>{{ job.title}}</h2>
+            <strong>{{ job.company_name }}</strong>
+          </div>
+          <div class="job-listing-location mb-3 mb-sm-0 custom-width w-25">
+            <span class="icon-room"></span> {{ job.location }}
+          </div>
+          <div class="job-listing-meta">
+            <span class="badge badge-danger">
+              {% if job.job_type == 'full time' %} Full Time {% elif job.job_type == 'part time'%} Part Time {% else  %} Internship {% endif %}
+            </span>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% include 'paginator.html' %}
+  </div>
+</section>
+{% endif %}
+{% endblock content %}

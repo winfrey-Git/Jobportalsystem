@@ -1,0 +1,29 @@
+
+<h4>Skills</h4>
+<div class="card mb-4">
+    <div class="card-body">
+        <ul class="list-inline">
+            {% for skill in skills %}
+                <li class="list-inline-item badge bg-primary">{{ skill.name }}</li>
+            {% empty %}
+                <p>No skills added yet.</p>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5>Certifications</h5>
+        <ul class="list-group">
+            {% for certification in  certifications %}
+            <li class="list-group-item">
+                {{ certification.name }} - {{ certification.issuer }}
+            </li>
+            {% empty %}
+            <p>No certifications added yet.</p>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h4>Search Results for "{{ query }}"</h4>
+    {% if jobs %}
+        <ul class="list-group">
+            {% for job in jobs %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ job.title }}</strong> at {{ job.company_name }}
+                        <br>
+                        <small class="text-muted">Location: {{ job.location }}</small>
+                        <br>
+                        <small class="text-muted">Category: {{ job.category }}</small>
+                    </div>
+                    <a href="{% url 'job_detail' job.id %}" class="btn btn-sm btn-outline-info">View</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">No matching jobs found.</p>
+    {% endif %}
+</div>
+{% endblock %}

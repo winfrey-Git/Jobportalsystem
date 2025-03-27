@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+<!-- Hero Section with Search Form -->
+<section class="home-section section-hero d-flex align-items-center justify-content-center vh-100 text-white" style="background: #ccc url('{% static "images/background.jpg" %}') no-repeat center center / cover;">
+  <div class="container text-center">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-10">  <!-- Increased width to col-lg-10 for a wider search area -->
+          <h1 class="display-4 font-weight-bold mb-4 text-center">Find Your Dream Job Today</h1>
+          <p class="lead text-center">Join thousands of job seekers and connect with top companies.</p>
+  
+          <div class="search-container mt-4">
+              <form method="GET" action="{% url 'search_result' %}" class="bg-white rounded p-4 shadow-lg w-100">
+                  <div class="row g-3">
+                      {% include 'search.html' %}
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+  
+
+  </div>
+</section>
+
+<!-- Job Portal Stats Section -->
+<section id="stats" class="py-5 bg-light">
+  <div class="container">
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-8 text-center">
+        <h2 class="section-title text-success mb-3">Job Portal Stats</h2>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-md-3 mb-4">
+        <div class="border p-4 rounded shadow-sm">
+          <h3 id="candidate-count" class="display-4 text-success">0</h3>
+          <p class="caption text-dark">Candidates</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-4">
+        <div class="border p-4 rounded shadow-sm">
+          <h3 id="job-count" class="display-4 text-success">0</h3>
+          <p class="caption text-dark">Jobs Posted</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-4">
+        <div class="border p-4 rounded shadow-sm">
+          <h3 id="completed-job-count" class="display-4 text-success">0</h3>
+          <p class="caption text-dark">Jobs Filled</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-4">
+        <div class="border p-4 rounded shadow-sm">
+          <h3 id="company-count" class="display-4 text-success">0</h3>
+          <p class="caption text-dark">Companies</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("candidate-count").innerText = "{{ total_candidates }}";
+    document.getElementById("job-count").innerText = "{{ total_jobs }}";
+    document.getElementById("completed-job-count").innerText = "{{ total_completed_jobs }}";
+    document.getElementById("company-count").innerText = "{{ total_companies }}";
+  });
+</script>
+
+
+<section class="py-5">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center">
+        <h2 class="text-success mb-3">Trending Jobs</h2>
+        <p class="lead text-muted">Explore jobs currently trending on our portal.</p>
+      </div>
+    </div>
+
+    <ul id="job" class="job-listings mb-5">
+      {% for job in trending_jobs %}
+      <li class="job-listing d-block d-sm-flex pb-3 pb-sm-0 align-items-center bg-white shadow-sm rounded mb-3 p-3">
+       
+      <div class="job-listing-logo">
+        {% if job.company and job.company.company_logo %}
+            <img src="{{ job.company.company_logo.url }}" alt="{{ job.company.company_name }} Logo"
+                  class="img-fluid rounded-square" style="width: 60px; height: 60px; object-fit: cover;">
+        {% else %}
+            <img src="{% static 'images/default-logo.png' %}" alt="Default Company Logo"
+                  class="img-fluid rounded-square" style="width: 60px; height: 60px; object-fit: cover;">
+        {% endif %}
+      </div>
+      
+      <div class="job-listing-about d-sm-flex custom-width w-100 justify-content-between mx-4">
+        <div class="job-listing-position custom-width w-50 mb-3 mb-sm-0">
+          <!-- Make job title a clickable link -->
+          <h4 class="text-dark">
+            <a href="{% url 'single_job' job.id %}" class="text-decoration-none text-dark">
+              {{ job.title }}
+            </a>
+          </h4>
+          <strong class="text-secondary">{{ job.company.company_name  }}</strong>
+        </div>
+          
+          <div class="job-listing-location mb-3 mb-sm-0 custom-width w-25 text-dark">
+            <i class="bi bi-geo-alt-fill text-muted"></i>  
+            <span class="font-weight-bold">{{ job.location }}</span>
+          </div>
+          
+          <div class="job-listing-meta">
+            {% if job.type == "full time" %}
+            <span class="badge bg-success p-2">Full Time</span>
+            {% elif job.type == "part time" %}
+            <span class="badge bg-danger p-2">Part Time</span>
+            {% elif job.type == "internship" %}
+            <span class="badge bg-info p-2">Internship</span>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+      {% empty %}
+      <div class="col-12 text-center">
+        <p>No trending jobs available at the moment.</p>
+      </div>
+      {% endfor %}
+    </ul>
+    
+
+
+<section class="py-5 bg-success mb-3 w-100 d-flex">
+  <div class="container-fluid">
+    {% if request.user.is_authenticated %}
+      {% if request.user.role == "employer" %}
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h2 class="text-white">Want To Hire?</h2>
+          <p class="mb-0 text-white lead">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        </div>
+        <div class="col-md-3 ml-auto">
+          <a href="{% url 'job_posting' %}" class="btn btn-warning btn-block btn-lg">Post Your Job</a>
+        </div>
+      </div>
+      {% elif request.user.role == "employee" %}
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h2 class="text-white">Looking For A Job?</h2>
+          <p class="mb-0 text-white lead">Join thousands of job seekers and find your dream job today!</p>
+        </div>
+        <div class="col-md-3 ml-auto">
+          <a href="{% url 'job_list' %}" class="btn btn-warning btn-block btn-lg">Job List</a>
+        </div>
+      </div>
+      {% endif %}
+    {% else %}
+    <div class="row align-items-center ">
+      <div class="col-md-8">
+        <h2 class="text-white">Looking For A Job?</h2>
+        <p class="mb-0 text-white lead">Join thousands of job seekers and find your dream job today!</p>
+      </div>
+      <div class="col-md-3 ml-auto">
+        <a href="{% url 'jobseeker_register' %}" class="btn btn-warning btn-block btn-lg">Sign Up</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}
+
+

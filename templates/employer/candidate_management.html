@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Candidate Management</h2>
+
+{% if applications %}
+    <table class="table table-bordered table-hover">
+        <thead class="bg-success text-white">
+            <tr>
+                <th>#</th>
+                <th>Applicant</th>
+                <th>Resume</th>
+                <th>Cover Letter</th>
+                <th>Application Date</th>
+                <th>Application Status</th>
+                <th>Interview Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <a href="{% url 'view_profile' application.applicant.id %}" class="text-decoration-none">
+                        {{ application.applicant.get_full_name }}
+                    </a>
+                </td>
+                
+                <td>
+                    {% if application.resume %}
+                        <a href="{{ application.resume.url }}" class="btn btn-sm btn-primary" target="_blank">Download</a>
+                    {% else %}
+                        No Resume
+                    {% endif %}
+                </td>
+                <td>
+                    {% if application.cover_letter %}
+                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#coverLetterModal{{ application.id }}">View</button>
+                    {% else %}
+                        No Cover Letter
+                    {% endif %}
+                </td>
+                <td>{{ application.created_at|date:"M d, Y" }}</td>
+
+                <!-- Application Status -->
+                <td>
+                    <span class="badge 
+                        {% if application.status == 'pending' %} bg-warning text-dark 
+                        {% elif application.status == 'shortlisted' %} bg-success 
+                        {% elif application.status == 'hired' %} bg-primary 
+                        {% else %} bg-danger {% endif %}">
+                        {{ application.status|title }}
+                    </span>
+                </td>
+
+                <!-- Interview Status -->
+                <td>
+                    {% with interview=application.interviews.first %}
+                        {% if interview %}
+                            <span class="badge 
+                                {% if interview.status == 'scheduled' %} bg-info 
+                                {% elif interview.status == 'completed' %} bg-success 
+                                {% elif interview.status == 'canceled' %} bg-danger {% endif %}">
+                                {{ interview.get_status_display }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary">Not Scheduled</span>
+                        {% endif %}
+                    {% endwith %}
+                </td>
+
+                <td>
+                    <!-- Update Application Status Form -->
+                    <form method="post" action="{% url 'update_application_status' application.id %}">
+                        {% csrf_token %}
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="pending" {% if application.status == "pending" %}selected{% endif %}>Pending</option>
+                            <option value="shortlisted" {% if application.status == "shortlisted" %}selected{% endif %}>Shortlist</option>
+                            <option value="hired" {% if application.status == "hired" %}selected{% endif %}>Hire</option>
+                            <option value="rejected" {% if application.status == "rejected" %}selected{% endif %}>Reject</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-info mt-1">Update</button>
+                    </form>
+
+                    <!-- Invite for Interview Button -->
+                    {% if application.status == "shortlisted" and not application.interviews.exists %}
+                    <a href="{% url 'schedule_interview' application.id %}" class="btn btn-sm btn-warning mt-1">Invite for Interview</a>
+                    {% endif %}
+                
+                    
+                    <!-- Manage Interview Status -->
+                    {% if application.interviews.all %}
+                        <a href="{% url 'update_interview_status' application.interviews.first.id %}" class="btn btn-sm btn-secondary mt-1">Manage Interview</a>
+                    {% endif %}
+                    
+                    <!-- Contact Applicant Button -->
+                    <a href="mailto:{{ application.applicant.email }}" class="btn btn-sm btn-dark mt-1">Contact</a>
+                </td>
+
+            </tr>
+
+            <!-- Cover Letter Modal -->
+            <div class="modal fade" id="coverLetterModal{{ application.id }}" tabindex="-1" aria-labelledby="coverLetterLabel{{ application.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Cover Letter</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ application.cover_letter|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="alert alert-info">No applicants found for your jobs.</div>
+{% endif %}
+
+{% endblock %}

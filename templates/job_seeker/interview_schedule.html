@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %} Applied Jobs {% endblock %}
+
+{% block content %} 
+<h4>Upcoming Interviews</h4>
+<ul class="list-group">
+    {% for interview in interviews %}
+    <li class="list-group-item">
+        <strong>{{ interview.job.title }}</strong> at {{ inteview.company }}
+        <span class="text-muted float end">{{ interview.date|date:"M d, Y H:i" }}</span>
+    </li>
+    {% empty %}
+    <p>No upcoming interviews scheduled.</p>
+    {% endfor %}
+</ul>
+
+{% endblock %}

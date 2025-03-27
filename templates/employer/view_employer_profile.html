@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4>Employer Profile</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Profile Picture / Company Logo -->
+                <div class="col-md-3 text-center">
+                    {% if company.logo %}
+                        <img src="{{ company.logo.url }}" class="img-fluid rounded-circle" alt="Company Logo">
+                    {% else %}
+                        <img src="/media/default-profile.png" class="img-fluid rounded-circle" alt="Default Logo">
+                    {% endif %}
+                </div>
+
+                <div class="col-md-9">
+                    <h5>{{ employer.get_full_name }}</h5>
+                    <p><strong>Email:</strong> {{ employer.email }}</p>
+                    <p><strong>Phone Number:</strong> {{ employer.phone_number }}</p>
+                    <p><strong>Gender:</strong> {{ employer.get_gender_display }}</p>
+                    <p><strong>Joined:</strong> {{ employer.date_joined|date:"Y-m-d" }}</p>
+
+                    <hr>
+                    <h5>Company Details</h5>
+                    <p><strong>Company Name:</strong> {{ company.name }}</p>
+                    <p><strong>Industry:</strong> {{ company.industry }}</p>
+                    <p><strong>Website:</strong> <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></p>
+                    <p><strong>Contact Email:</strong> {{ company.contact_email }}</p>
+                    <p><strong>Contact Number:</strong> {{ company.contact_number }}</p>
+                    <p><strong>Description:</strong> {{ company.description|safe }}</p>
+
+                    <a href="{% url 'edit_employer_profile' %}" class="btn btn-warning">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

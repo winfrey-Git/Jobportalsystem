@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - Job Portal{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Contact Us</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Contact Us</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="site-section bg-light py-5">
+  <div class="container">
+    <div class="row justify-content-center text-start mb-5">
+      <div class="col-md-8">
+        <h2 class="text-success font-weight-bold">Get in Touch</h2>
+        <p class="text-muted">
+          Have questions or need support? Fill out the form below, and we'll get back to you as soon as possible.
+        </p>
+      </div>
+    </div>
+
+    <div class="row align-items-center">
+      <!-- Contact Form -->
+      <div class="col-md-6">
+        <div class="bg-white p-4 rounded shadow-sm">
+          <h4 class="text-dark mb-4">Send Us a Message</h4>
+          <form method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label for="name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="message" class="form-label">Your Message</label>
+              <textarea class="form-control" id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Send Message</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Contact Info & Image -->
+      <div class="col-md-6">
+        <div class="text-center">
+          <img src="{% static 'images/contact2.jpg' %}" class="img-fluid rounded shadow-lg contact-img" alt="Contact Us">
+        </div>
+        <div class="mt-4">
+          <h5 class="text-dark">Our Office</h5>
+          <p class="text-muted">254 Job Street, Nairobi, Country</p>
+          <h5 class="text-dark">Email Us</h5>
+          <p class="text-muted">support@jobportal.com</p>
+          <h5 class="text-dark">Call Us</h5>
+          <p class="text-muted">+2547 9456 7890</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="section-hero overlay inner-page bg-image" style="background-image:url('{% static 'images/background.jpg' %}');" id="home-section">
+    <div class="container">
+        <div class="row py-3">
+            <div class="col-md-12">
+                <h1 class="text-white font-weight-bold">View Profile</h1>
+                <div class="custom-breadcrumbs">
+                    <a href="{% url 'home' %}" class="text-success">Home</a><span class="mx-2 slash">/</span>
+                    <span class="text-white"><strong>View Profile</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-body text-center">
+                    <img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3 border" width="150">
+                    <h4 class="text-success">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h4>
+                    <p class="text-muted">{{ user_profile.user.email }}</p>
+                    {% if request.user == user_profile.user %}
+                    <a href="{% url 'update_profile' %}" class="btn btn-success btn-sm">Edit Profile</a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Profile Details</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Bio:</strong> {{ user_profile.bio|default:"Not provided" }}</p>
+                    <p><strong>Education:</strong> 
+                        {% if user_profile.degree and user_profile.institution and user_profile.year %}
+                            {{ user_profile.degree }} from {{ user_profile.institution }} ({{ user_profile.year }})
+                        {% else %}
+                            <span class="text-danger">Education details are incomplete. Please update your profile.</span>
+                        {% endif %}
+                    </p>
+                    
+                    <p><strong>Experience:</strong> 
+                        {% if user_profile.job_title and user_profile.company and user_profile.experience %}
+                            {{ user_profile.job_title }} at {{ user_profile.company }} ({{ user_profile.experience }} years)
+                        {% else %}
+                            <span class="text-danger">Work experience details are incomplete. Please update your profile.</span>
+                        {% endif %}
+                    </p>
+                    
+                    <p><strong>Certifications:</strong> 
+                        {% if user_profile.certifications.all %}
+                            <ul class="list-unstyled">
+                                {% for cert in user_profile.certifications.all %}
+                                    <li><i class="fas fa-certificate text-success"></i> {{ cert.name }} <a href="{{ cert.file.url }}" class="btn btn-sm btn-primary ms-2" download>Download</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <span class="text-danger">No certifications uploaded.</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Skills:</strong> 
+                        {% if user_profile.skills.all %}
+                            <div class="d-flex flex-wrap">
+                                {% for skill in user_profile.skills.all %}
+                                    <span class="badge bg-success me-2 mb-2">{{ skill.name }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <span class="text-danger">None selected. Please update your profile.</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Job Alerts:</strong> 
+                        {% if user_profile.job_alerts %}
+                            Enabled for <strong class="text-success">{{ user_profile.job_alert_category.name }}</strong>
+                        {% else %}
+                            <span class="text-danger">Not enabled.</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mt-3 shadow-lg border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Resume</h5>
+                </div>
+                <div class="card-body">
+                    <h5>Profile Resume</h5>
+                    {% if user_profile.resume %}
+                        <div class="d-flex justify-content-between align-items-center border p-2 rounded">
+                            <p class="mb-0"><i class="fas fa-file-alt text-primary"></i> {{ user_profile.resume.name }}</p>
+                            <a href="{{ user_profile.resume.url }}" class="btn btn-primary btn-sm" download>Download</a>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No resume uploaded.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

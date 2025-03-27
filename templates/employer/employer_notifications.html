@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Notifications</h2>
+
+    <!-- Summary Cards -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3 rounded">
+                <h5>New Applications</h5>
+                <h3 class="text-primary">{{ new_applications }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3 rounded">
+                <h5>Interview Responses</h5>
+                <h3 class="text-primary">{{ interview_responses }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center p-3 rounded">
+                <h5>System Updates</h5>
+                <h3 class="text-primary">{{ system_updates }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="mt-4">
+        <div class="card shadow-sm p-3">
+            <h4 class="mb-3">All Notifications</h4>
+            {% if notifications %}
+                <ul class="list-group">
+                    {% for notification in notifications %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center {% if not notification.is_read %}bg-light{% endif %}">
+                            <span>{{ notification.message }}</span>
+                            <small class="text-muted">{{ notification.created_at }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No notifications available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+<form method="GET" action="{% url 'search_result' %}" class="mb-4">
+  <div class="row g-2 align-items-center">
+    <!-- Job Title or Company Name -->
+    <div class="col-md-3">
+        <input type="text" name="job_title_or_company_name" class="form-control" 
+               placeholder="Job Title or Company Name" 
+               value="{{ request.GET.job_title_or_company_name }}">
+    </div>
+
+    <!-- Location -->
+    <div class="col-md-3">
+        <input type="text" name="location" class="form-control" 
+               placeholder="Location" value="{{ request.GET.location }}">
+    </div>
+
+    <!-- Industry -->
+    <div class="col-md-3">
+        <input type="text" name="industry" class="form-control" 
+               placeholder="Industry (e.g., IT, Finance)" 
+               value="{{ request.GET.industry }}">
+    </div>
+
+    <!-- Job Type Dropdown -->
+    <div class="col-md-3">
+        <select name="job_type" class="form-control">
+            <option value="" disabled selected>Select Job Type</option>
+            <option value="full time" {% if request.GET.job_type == "full time" %}selected{% endif %}>Full Time</option>
+            <option value="part time" {% if request.GET.job_type == "part time" %}selected{% endif %}>Part Time</option>
+            <option value="internship" {% if request.GET.job_type == "internship" %}selected{% endif %}>Internship</option>
+        </select>
+    </div>
+
+    <!-- Centered Search Button -->
+    <div class="col-md-12 d-flex justify-content-center mt-2">
+        <button type="submit" class="btn btn-success px-5">Search</button>
+    </div>
+  </div>
+</form>

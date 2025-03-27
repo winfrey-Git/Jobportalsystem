@@ -1,0 +1,20 @@
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div>
+        <label for="profile_picture">Profile Picture:</label>
+        {% if user.userprofile.profile_picture %}
+            <img src="{{ profile_pic_url }}" alt="Profile Picture" width="100" height="100">
+        {% else %}
+            <img src="/static/default-avatar.jpg" alt="Default Profile Picture" width="100" height="100">
+        {% endif %}
+        {{ form.profile_picture }}
+    </div>
+
+    <div>
+        <label for="bio">Bio:</label>
+        {{ form.bio }}
+    </div>
+
+    <button type="submit">Update Profile</button>
+</form>

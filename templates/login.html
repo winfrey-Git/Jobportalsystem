@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- HOME -->
+<section class="section-hero overlay inner-page bg-image"
+  style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Log In</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Log In</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="site-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mx-auto mb-5">
+
+        {% include 'messages.html' %}
+
+        {% if form.errors %}
+          {% for field in form %}
+            {% for error in field.errors %}
+              <div class="alert alert-danger text-dark alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>{{ error|escape }}</strong>
+              </div>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <div class="alert alert-danger text-white alert-dismissable">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <strong>{{ error|escape }}</strong>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}" class="p-4 border rounded">
+          {% csrf_token %}
+          
+          <div class="row form-group">
+            <div class="col-md-12 mb-3">
+              <label class="text-black" for="id_email">Email</label>
+              <input type="email" class="form-control" name="email" id="id_email" placeholder="Enter your email" required>
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col-md-12 mb-3">
+              <label class="text-black" for="id_password">Password</label>
+              <input type="password" class="form-control" name="password" id="id_password" placeholder="Enter your password" required>
+            </div>
+          </div>
+            <!-- Math Verification -->
+          <div class="row form-group">
+            <div class="col-md-12 mb-3">
+              <label class="text-black">Solve this to verify you're human:</label>
+              <p class="font-weight-bold">{{ num1 }} + {{ num2 }} = ?</p>
+              <input type="hidden" name="num1" value="{{ num1 }}">
+              <input type="hidden" name="num2" value="{{ num2 }}">
+              <input type="text" class="form-control" name="math_answer" placeholder="Enter your answer" required>
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col-md-12">
+              <input type="submit" value="Sign In" class="btn px-4 btn-success text-white">
+            </div>
+          </div>
+
+          <div class="text-center mt-3">
+            <a href="{% url 'password_reset' %}" class="text-success">Forgot Password?</a>
+          </div>
+          <div class="text-center mt-2">
+            Don't have an account? 
+            <a href="{% url 'jobseeker_register' %}" class="text-success">Sign Up as Jobseeker</a> | 
+            <a href="{% url 'employer_registration' %}" class="text-success">Sign Up as Employer</a>
+          </div>
+          
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

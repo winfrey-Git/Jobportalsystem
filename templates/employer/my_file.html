@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Employer Dashboard</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    {% load static %}
+
+   
+<!-- Sidebar Styling (Fixed Sidebar with Equal Space and Border) -->
+<style>
+    /* Sidebar styling */
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 250px;
+        background: white;
+        overflow-y: auto;
+        z-index: 1000;
+        border-right: 1px solid #ddd; /* Border for separation */
+        padding-right: 15px; /* Extra padding inside sidebar */
+    }
+
+    /* Sidebar navigation links */
+    #sidebar .nav-link {
+        color: #28a745;
+        font-weight: bold;
+        margin-bottom: 10px;
+        transition: background 0.3s, padding 0.3s;
+    }
+
+    #sidebar .nav-link:hover {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding-left: 15px;
+    }
+
+    /* Main content area */
+    #main-content {
+        margin-left: 270px; /* Equal spacing */
+        margin-right: 30px; /* Same as left for balanced spacing */
+        padding-top: 20px;
+        border-left: 1px solid #ddd; /* Border for balance */
+    }
+
+    /* Responsive sidebar on smaller screens */
+    @media (max-width: 768px) {
+        #sidebar {
+            position: fixed;
+            width: 100%;
+            height: auto;
+            z-index: 1050;
+            top: 0;
+            left: 0;
+            display: none;
+            padding-top: 15px;
+        }
+
+        #sidebar.active {
+            display: block;
+        }
+
+        #main-content {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+</style>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar p-3 shadow-sm">
+                <div class="text-center mb-4">
+                    {% if request.user.employer_profile.company_logo %}
+                        <img src="{{ request.user.employer_profile.company_logo.url }}" 
+                             alt="Company Logo" 
+                             class="img-fluid rounded-circle" 
+                             width="80">
+                    {% else %}
+                        <img src="{% static 'images/default_company_logo.png' %}" 
+                             alt="Default Logo" 
+                             class="img-fluid rounded-circle" 
+                             width="80">
+                    {% endif %}
+                    <h6 class="mt-2 text-success fw-bold">Welcome, {{ request.user.first_name }}</h6>
+                </div>
+    
+                <h4 class="text-center text-success fw-bold">Employer Panel</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'employer_dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+    
+                    <!-- Job Postings Section (Collapsible) -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex justify-content-between align-items-center" 
+                           data-bs-toggle="collapse" href="#jobPostingsMenu" role="button" aria-expanded="false">
+                            <span><i class="fas fa-briefcase"></i> Job Postings</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="collapse" id="jobPostingsMenu">
+                            <ul class="nav flex-column ms-3">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'job_posting' %}">
+                                        <i class="fas fa-plus-circle"></i> Post a Job
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'job_list' %}">
+                                        <i class="fas fa-list"></i> Job Listings
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'active_jobs' %}">
+                                        <i class="fas fa-check-circle text-success"></i> Active Jobs
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'expired_jobs' %}">
+                                        <i class="fas fa-times-circle text-danger"></i> Expired Jobs
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'search_resumes' %}">
+                            <i class="fas fa-search"></i> Search Resumes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'candidate_management' %}">
+                            <i class="fas fa-users"></i> Applicant Tracking
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'performance_analytics' %}">
+                            <i class="fas fa-chart-line"></i> Performance Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'employer_notifications' %}">
+                            <i class="fas fa-bell"></i> Notifications
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_employer_profile' %}">
+                            <i class="fas fa-user"></i> My Account (Profile & Settings)
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+    
+            <!-- Main Content -->
+            <main class="col-md-7 col-lg-8 px-4">
+                <h2 class="mb-3 text-success fw-bold">Dashboard Overview</h2>
+                <p>Welcome to your employer dashboard. Here is a quick summary of your job postings and applicants.</p>
+                
+                <!-- Job Summary -->
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card border-success shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-success"><i class="fas fa-briefcase"></i> Total Jobs</h5>
+                                <p class="card-text fw-bold">{{ total_jobs }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-primary shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary"><i class="fas fa-check-circle"></i> Active Jobs</h5>
+                                <p class="card-text fw-bold">{{ active_jobs }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-danger shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-danger"><i class="fas fa-times-circle"></i> Expired Jobs</h5>
+                                <p class="card-text fw-bold">{{ expired_jobs }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Applicant Summary -->
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4">
+                        <div class="card border-info shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-info"><i class="fas fa-users"></i> Applicants</h5>
+                                <p class="card-text fw-bold">{{ total_applicants }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-warning shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-warning"><i class="fas fa-user-check"></i> Shortlisted</h5>
+                                <p class="card-text fw-bold">{{ shortlisted }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-success shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-success"><i class="fas fa-user-tie"></i> Hired</h5>
+                                <p class="card-text fw-bold">{{ hired }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+    
+            <!-- Right Panel (Summary) -->
+            <aside class="col-md-2 d-none d-lg-block">
+                <div class="card shadow-sm border-info mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-info"><i class="fas fa-chart-line"></i> Performance Overview</h5>
+                        <p class="card-text">Total Views: <strong>{{ total_views }}</strong></p>
+                        <p class="card-text">Profile Visits: <strong>{{ profile_visits }}</strong></p>
+                        <p class="card-text">Applications: <strong>{{ total_applications }}</strong></p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar p-3 shadow-sm">
+                <div class="text-center mb-4">
+                    {% if request.user.employer_profile.company_logo %}
+                        <img src="{{ request.user.employer_profile.company_logo.url }}" 
+                             alt="Company Logo" 
+                             class="img-fluid rounded-circle" 
+                             width="80">
+                    {% else %}
+                        <img src="{% static 'images/default_company_logo.png' %}" 
+                             alt="Default Logo" 
+                             class="img-fluid rounded-circle" 
+                             width="80">
+                    {% endif %}
+                    <h6 class="mt-2 text-success fw-bold">Welcome, {{ request.user.first_name }}</h6>
+                </div>
+    
+                <h4 class="text-center text-success fw-bold">Employer Panel</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'employer_dashboard' %}">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+    
+                    <!-- Job Postings Section (Collapsible) -->
+                    <li class="nav-item">
+                        <a class="nav-link d-flex justify-content-between align-items-center" 
+                           data-bs-toggle="collapse" href="#jobPostingsMenu" role="button" aria-expanded="false">
+                            <span><i class="fas fa-briefcase"></i> Job Postings</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <div class="collapse" id="jobPostingsMenu">
+                            <ul class="nav flex-column ms-3">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'job_posting' %}">
+                                        <i class="fas fa-plus-circle"></i> Post a Job
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'job_list' %}">
+                                        <i class="fas fa-list"></i> Job Listings
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'active_jobs' %}">
+                                        <i class="fas fa-check-circle text-success"></i> Active Jobs
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'expired_jobs' %}">
+                                        <i class="fas fa-times-circle text-danger"></i> Expired Jobs
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'search_resumes' %}">
+                            <i class="fas fa-search"></i> Search Resumes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'candidate_management' %}">
+                            <i class="fas fa-users"></i> Applicant Tracking
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'performance_analytics' %}">
+                            <i class="fas fa-chart-line"></i> Performance Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'employer_notifications' %}">
+                            <i class="fas fa-bell"></i> Notifications
+                        </a>
+                    </li>
+    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'employer_profile' %}">
+                            <i class="fas fa-user"></i> My Account (Profile & Settings)
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+    
+            <!-- Main Content -->
+            <main class="col-md-7 col-lg-8 px-4">
+                <h2 class="mb-3 text-success fw-bold">Dashboard Overview</h2>
+                <p>Welcome to your employer dashboard. Here is a quick summary of your job postings and applicants.</p>
+                
+                <!-- Job Summary -->
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card border-success shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-success"><i class="fas fa-briefcase"></i> Total Jobs</h5>
+                                <p class="card-text fw-bold">{{ total_jobs }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-primary shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-primary"><i class="fas fa-check-circle"></i> Active Jobs</h5>
+                                <p class="card-text fw-bold">{{ active_jobs }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-danger shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-danger"><i class="fas fa-times-circle"></i> Expired Jobs</h5>
+                                <p class="card-text fw-bold">{{ expired_jobs }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Applicant Summary -->
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4">
+                        <div class="card border-info shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-info"><i class="fas fa-users"></i> Applicants</h5>
+                                <p class="card-text fw-bold">{{ total_applicants }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-warning shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-warning"><i class="fas fa-user-check"></i> Shortlisted</h5>
+                                <p class="card-text fw-bold">{{ shortlisted }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-success shadow-sm">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-success"><i class="fas fa-user-tie"></i> Hired</h5>
+                                <p class="card-text fw-bold">{{ hired }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+    
+            <!-- Right Panel (Summary) -->
+            <aside class="col-md-2 d-none d-lg-block">
+                <div class="card shadow-sm border-info mb-3">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-info"><i class="fas fa-chart-line"></i> Performance Overview</h5>
+                        <p class="card-text">Total Views: <strong>{{ total_views }}</strong></p>
+                        <p class="card-text">Profile Visits: <strong>{{ profile_visits }}</strong></p>
+                        <p class="card-text">Applications: <strong>{{ total_applications }}</strong></p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+        
+
+<!-- Bootstrap 5.3 JS and Sidebar Toggle Script -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const sidebar = document.getElementById("sidebar");
+        document.addEventListener("click", function(event) {
+            if (!sidebar.contains(event.target) && window.innerWidth <= 768) {
+                sidebar.classList.remove("active");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
