@@ -1,0 +1,72 @@
+{% block content %}
+    <div class="container mt-5">
+        <h2>Reschedule Interview for {{ interview.application.applicant.get_full_name }}</h2>
+        <p><strong>Job Title: </strong> {{ interview.application.job.title }}</p>
+        <p><strong>Current Interview Date: </strong> {{ interview.date }} at {{ interview.time }}</p>
+
+        {% if messages %}
+            <div class="alert alert-warning">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" class="shadow p-4 rounded border dashboard-form">
+            {% csrf_token %}
+            
+            <!-- Date Field -->
+            <div class="form-group">
+                <label for="date">New Interview Date:</label>
+                <input type="date" name="date" id="date" class="form-control" value="{{ interview.date }}" required 
+                       min="{{ current_date|date:'Y-m-d' }}" 
+                       max="{{ max_date|date:'Y-m-d' }}">
+            </div>
+
+            <!-- Time Field -->
+            <div class="form-group">
+                <label for="time">New Interview Time:</label>
+                <input type="time" name="time" id="time" class="form-control" value="{{ interview.time }}">
+            </div>
+
+            <!-- Interview Mode Field -->
+            <div class="form-group">
+                <label for="mode">Interview Mode:</label>
+                <select name="mode" id="mode" class="form-control" required>
+                    <option value="In-Person" {% if interview.mode == 'In-Person' %}selected{% endif %}>In-Person</option>
+                    <option value="Online" {% if interview.mode == 'Online' %}selected{% endif %}>Online</option>
+                </select>
+            </div>
+
+            <!-- Interview Link Field (For Online Mode Only) -->
+            <div class="form-group" id="interview_link_group" {% if interview.mode != 'Online' %}style="display:none;"{% endif %}>
+                <label for="interview_link">Interview Link (Required for Online interviews):</label>
+                <input type="url" name="interview_link" id="interview_link" class="form-control" 
+                       value="{{ interview.interview_link }}" {% if interview.mode != 'Online' %}disabled{% endif %}>
+            </div>
+
+            <!-- Submit Button (Reschedule) -->
+            <button type="submit" class="btn btn-success btn-block mb-3 mt-3">Reschedule Interview</button>
+
+            <!-- Cancel Button (Back to Interview Management) -->
+            <a href="{% url 'interview_management' %}" class="btn btn-danger btn-block dashboard-load">Cancel</a>
+        </form>
+    </div>
+
+    <!-- JavaScript to show/hide Interview Link field based on Mode -->
+    <script>
+        document.getElementById("mode").addEventListener("change", function() {
+            var mode = this.value;
+            var linkField = document.getElementById("interview_link_group");
+            var linkInput = document.getElementById("interview_link");
+
+            if (mode === "Online") {
+                linkField.style.display = "block";
+                linkInput.disabled = false;
+            } else {
+                linkField.style.display = "none";
+                linkInput.disabled = true;
+            }
+        });
+    </script>
+{% endblock %}

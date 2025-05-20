@@ -1,15 +1,12 @@
-{% extends 'base.html' %}
-
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-10">
             <div class="card shadow-lg">
                 <div class="card-header bg-success text-white text-center">
                     <h4>Edit Employer Profile</h4>
                 </div>
-                <div class="card-body">
-                    <!-- Display Success Messages -->
+                <div class="card-body p-4">
                     {% if messages %}
                         {% for message in messages %}
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -19,25 +16,89 @@
                         {% endfor %}
                     {% endif %}
 
-                    <form method="POST" enctype="multipart/form-data">
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li><strong>{{ field|title }}</strong>: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" enctype="multipart/form-data" class="dashboard-form shadow p-4 bg-light rounded">
                         {% csrf_token %}
-                        
-                        <!-- Loop through form fields and add Bootstrap styling -->
-                        {% for field in form %}
-                            <div class="mb-3">
-                                <label class="form-label">{{ field.label }}</label>
-                                {{ field }}
-                                {% if field.errors %}
-                                    <div class="text-danger small">
-                                        {{ field.errors|striptags }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                        
+
+                        <h5 class="text-success">Employer Information</h5>
+                        <hr>
+
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ request.user.get_full_name }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email (Cannot be changed)</label>
+                            <input type="email" class="form-control" value="{{ request.user.email }}" disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Gender</label>
+                            <select name="gender" class="form-control">
+                                <option value="M" {% if request.user.gender == "M" %}selected{% endif %}>Male</option>
+                                <option value="F" {% if request.user.gender == "F" %}selected{% endif %}>Female</option>
+                            </select>
+                        </div>
+
+                        <h5 class="text-success mt-4">Company Information</h5>
+                        <hr>
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" name="company_name" class="form-control" value="{{ request.user.company.company_name }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Contact Email</label>
+                            <input type="email" name="contact_email" class="form-control" value="{{ request.user.company.contact_email }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Website</label>
+                            <input type="url" name="company_website" class="form-control" value="{{ request.user.company.website }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Address</label>
+                            <input type="text" name="company_address" class="form-control" value="{{ request.user.company.company_address }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Industry Type</label>
+                            <input type="text" name="company_industry" class="form-control" value="{{ request.user.company.industry }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Description</label>
+                            <textarea name="company_description" class="form-control" rows="4">{{ request.user.company.company_description|striptags }}</textarea>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Logo</label>
+                            <input type="file" name="company_logo" class="form-control">
+                            {% if request.user.company.company_logo %}
+                                <div class="mt-2">
+                                    <img src="{{ request.user.company.company_logo.url }}" alt="Company Logo" width="100">
+                                </div>
+                            {% endif %}
+                        </div>
+
                         <div class="d-flex justify-content-between">
-                            <a href="{% url 'view_employer_profile' %}" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-success">Update Profile</button>
+                            <a href="{% url 'view_employer_profile' %}" class="btn btn-secondary dashboard-load">Cancel</a>
+                            <input type="submit" value="Update Profile" class="btn px-4 btn-success text-white">
                         </div>
                     </form>
                 </div>
@@ -46,6 +107,6 @@
     </div>
 </div>
 
-<!-- Bootstrap JS (if not included in base.html) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 {% endblock %}

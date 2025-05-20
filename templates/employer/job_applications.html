@@ -2,7 +2,6 @@
     {% for job in jobs %}
         <h4 class="mt-4">{{ job.title }}</h4>
         {% with job.application.all as applications %}  <!-- Use 'application' instead of 'application_set' -->
-            <p>Total Applications: {{ applications|length }}</p>
             {% if applications %}
                 <table class="table table-bordered table-hover mt-3">
                     <thead class="bg-success text-white">
@@ -24,7 +23,7 @@
                             <td>{{ application.applicant.email }}</td>
                             <td>
                                 {% if application.resume and application.resume.resume %}
-                                    <a href="{{ application.resume.resume.url }}" class="btn btn-sm btn-primary" target="_blank">Download</a>
+                                    <a href="{{ application.resume.resume.url }}" class="btn btn-sm btn-success" target="_blank">Download</a>
                                 {% else %}
                                     No Resume
                                 {% endif %}
@@ -43,7 +42,7 @@
                             
                             </td>
                             <td>
-                                <a href="{% url 'application_detail' application.id %}" class="btn btn-sm btn-info">View Details</a>
+                                <a href="{% url 'application_detail' application.id %}" class="btn btn-sm btn-success dashboard-load">View Details</a>
                             </td>
                         </tr>
                         {% endfor %}

@@ -2,8 +2,6 @@
 {% load static %}
 
 {% block content %}
-
-<!-- Hero Section -->
 <section class="section-hero overlay inner-page bg-image" style="background-image:url('{% static 'images/background.jpg' %}');" id="home-section">
     <div class="container">
         <div class="row py-3">
@@ -27,92 +25,132 @@
                 
                 <form method="POST" enctype="multipart/form-data" class="shadow p-4 bg-light rounded">
                     {% csrf_token %}
-                    
-                    <!-- Profile Picture Section -->
-                    <div class="row mb-5 p-4 border rounded bg-white">
+                    <!-- Full Name -->
+                    <div class="row mb-4 p-4 border rounded bg-white">
+                        <h4 class="text-dark mb-3">Full Name</h4>
+                        <div class="col-lg-12">
+                            <label for="id_first_name">First Name:</label>
+                            <input type="text" name="first_name" id="id_first_name" class="form-control" value="{{ form.first_name.value|default_if_none:'' }}" placeholder="Enter your first name">
+                            
+                            <label for="id_last_name" class="mt-3">Last Name:</label>
+                            <input type="text" name="last_name" id="id_last_name" class="form-control" value="{{ form.last_name.value|default_if_none:'' }}" placeholder="Enter your last name">
+                        </div>
+                    </div>
+                    <!-- Profile Picture -->
+                    <div class="row mb-4 p-4 border rounded bg-white">
                         <h4 class="text-dark mb-3">Profile Picture</h4>
                         <div class="col-lg-12">
                             {% if form.instance.profile_picture %}
                                 <p>Current Profile Picture:</p>
                                 <img src="{{ form.instance.profile_picture.url }}" class="img-thumbnail mb-3" style="max-width: 150px;">
-                                <label><input type="checkbox" name="keep_profile_picture" checked> Keep existing</label>
                             {% endif %}
                             <input type="file" name="profile_picture" class="form-control">
                         </div>
                     </div>
-                    
-                    <!-- Bio Section -->
-                    <div class="row mb-5 p-4 border rounded bg-white">
-                        <h4 class="text-dark mb-3">Bio</h4>
-                        <div class="col-lg-12">
-                            <textarea name="bio" class="form-control" placeholder="Tell us about yourself..." required>{{ form.bio.value }}</textarea>
-                        </div>
+                    <div class="row mb-4 p-4 border rounded bg-white">
+                        <h4 class="text-dark mb-3">Phone Number:</h4>
+                        <input type="text" name="phone_number" id="id_phone_number" class="form-control" value="{{ form.phone_number.value|default_if_none:'' }}" placeholder="Enter your phone number">
                     </div>
                     
-                    <!-- Resume/CV Upload Section -->
-                    <div class="row mb-5 p-4 border rounded bg-white">
+                    <!-- Bio -->
+                    <div class="row mb-4 p-4 border rounded bg-white">
+                        <h4 class="text-dark mb-3">Bio</h4>
+                        <div class="col-lg-12">
+                            <textarea name="bio" class="form-control" placeholder="Tell us about yourself...">{{ form.bio.value }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Resume Upload -->
+                    <div class="row mb-4 p-4 border rounded bg-white">
                         <h4 class="text-dark mb-3">Upload Resume/CV</h4>
                         <div class="col-lg-12">
                             {% if form.instance.resume %}
                                 <p>Current Resume: <a href="{{ form.instance.resume.url }}" target="_blank">View Resume</a></p>
-                                <label><input type="checkbox" name="keep_resume" checked> Keep existing</label>
                             {% endif %}
                             <input type="file" name="resume" class="form-control">
                         </div>
                     </div>
-                    
-                    <!-- Skills Section -->
-                    <div class="row mb-5 p-4 border rounded bg-white">
+
+                    <!-- Skills Selection -->
+                    <div class="row mb-4 p-4 border rounded bg-white">
                         <h4 class="text-dark mb-3">Skills</h4>
-                        <div class="col-lg-12 position-relative">
-                            <div id="skills-container" class="border rounded p-2 d-flex flex-wrap align-items-center bg-white" style="min-height: 38px; cursor: pointer;">
-                                <span id="placeholder-text" class="text-muted">Select Skills</span>
+                        <div class="col-lg-12">
+                            <!-- Input field that triggers the dropdown -->
+                            <div class="position-relative">
+                                <input type="text" id="skills-input" class="form-control" placeholder="Select skills" onclick="toggleDropdown()" onkeyup="filterSkills()">
+                                
+                                <!-- Skills dropdown -->
+                                <div id="skills-dropdown" class="dropdown-menu w-100 p-2 shadow" style="display: none; max-height: 200px; overflow-y: auto;">
+                                    {% for skill in form.fields.skills.queryset %}
+                                        <button type="button" class="dropdown-item skill-option" data-id="{{ skill.id }}" onclick="selectSkill(this)">
+                                            {{ skill.name }}
+                                        </button>
+                                    {% endfor %}
+                                </div>
                             </div>
-                            <div id="skills-dropdown" class="position-absolute bg-white border rounded p-2 w-100 d-none" style="z-index: 1000; max-height: 200px; overflow-y: auto;">
-                                {% for skill in form.fields.skills.queryset %}
-                                    <div class="skill-option p-2" data-value="{{ skill.id }}">{{ skill.name }}</div>
+
+                            <!-- Selected skills display -->
+                            <div id="selected-skills" class="mt-3">
+                                {% for skill in form.instance.skills.all %}
+                                    <span class="badge bg-success p-2 m-1 selected-skill" data-id="{{ skill.id }}">
+                                        {{ skill.name }} 
+                                        <button type="button" class="btn-close btn-sm ms-1 text-white" onclick="removeSkill(this)"></button>
+                                    </span>
+                                    <input type="hidden" name="skills" value="{{ skill.id }}">
                                 {% endfor %}
                             </div>
-                            <input type="hidden" name="skills" id="skills-hidden">
                         </div>
                     </div>
-                    
                     <!-- Education Section -->
-                    <div class="row mb-5 p-4 border rounded bg-white">
+                    <div class="row mb-4 p-4 border rounded bg-white">
                         <h4 class="text-dark mb-3">Education</h4>
                         <div class="col-lg-12">
-                            <input type="text" name="degree" class="form-control mb-3" placeholder="Degree (e.g., BSc in IT)" required>
-                            <input type="text" name="institution" class="form-control mb-3" placeholder="Institution (e.g., University of Nairobi)" required>
-                            <input type="number" name="year" class="form-control" placeholder="Year of Completion (e.g., 2023)" required>
+                            {% for form in education_forms %}
+                                <div class="mb-3 border p-3 rounded">
+                                    {{ form.as_p }}
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
-                    
+
                     <!-- Experience Section -->
-                    <div class="row mb-5 p-4 border rounded bg-white">
+                    <div class="row mb-4 p-4 border rounded bg-white">
                         <h4 class="text-dark mb-3">Experience</h4>
                         <div class="col-lg-12">
-                            <input type="text" name="job_title" class="form-control mb-3" placeholder="Job Title (e.g., Software Developer)" required>
-                            <input type="text" name="company" class="form-control mb-3" placeholder="Company (e.g., Google)" required>
-                            <input type="number" name="experience" class="form-control" placeholder="Years of Experience (e.g., 3)" required>
+                            {% for form in experience_forms %}
+                                <div class="mb-3 border p-3 rounded">
+                                    {{ form.as_p }}
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
-                    
-                    <!-- Certifications Section -->
-                    <div class="row mb-5 p-4 border rounded bg-white">
-                        <h4 class="text-dark mb-3">Certifications</h4>
-                        <div class="col-lg-12">
-                            <input type="text" name="certifications" class="form-control" placeholder="List your certifications (e.g., AWS Certified Developer)">
-                        </div>
-                    </div>
-                    
-                    <!-- Job Alerts Section -->
-                    <div class="row mb-5 p-4 border rounded bg-white">
+
+
+                    <!-- Job Alerts with Preferred Category -->
+                    <div class="row mb-4 p-4 border rounded bg-white">
                         <h4 class="text-dark mb-3">Job Alerts</h4>
                         <div class="col-lg-12">
-                            <label><input type="checkbox" name="job_alerts" {% if form.instance.job_alerts %}checked{% endif %}> Receive job alerts</label>
+                            <input type="hidden" name="job_alert" value="false"> <!-- ✅ Ensures False is sent if unchecked -->
+                            <label>
+                                <input type="checkbox" name="job_alert" value="true" {% if form.instance.job_alert %}checked{% endif %}> 
+                                Receive job alerts
+                            </label>
+                        </div>
+                    
+                        <div class="col-lg-12 mt-3">
+                            <label for="preferred_category">Preferred Job Category</label>
+                            <select name="preferred_category" class="form-control">
+                                <option value="">-- Select Category --</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if form.instance.preferred_category.id == category.id %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                     
+
                     <div class="col-md-12">
                         <input type="submit" value="Update Profile" class="btn px-4 btn-success text-white">
                     </div>
@@ -121,14 +159,45 @@
         </div>
     </div>
 </section>
+
+
 <!-- Custom Styling -->
 <style>
-    /* Selected Skills Styling */
-    #skills-container .badge {
+    /* Input Box with Selected Skills */
+    .skills-input-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        min-height: 40px;
+        border: 1px solid #ced4da;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: text;
+    }
+
+    .skills-input-container input {
+        border: none;
+        outline: none;
+        flex-grow: 1;
+    }
+
+    /* Selected Skills Badges */
+    .skill-tag {
+        display: inline-flex;
+        align-items: center;
         background-color: #28a745 !important; /* Green */
         color: white !important; /* White text */
-        font-weight: bold;
+        padding: 5px 10px;
         border-radius: 5px;
+        margin: 2px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .skill-tag .remove-skill {
+        margin-left: 8px;
+        cursor: pointer;
+        font-weight: bold;
     }
 
     /* Skill Option Styling */
@@ -146,59 +215,84 @@
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const skillsContainer = document.getElementById("skills-container");
-        const skillsDropdown = document.getElementById("skills-dropdown");
-        const hiddenSkillsInput = document.getElementById("skills-hidden");
-        const placeholderText = document.getElementById("placeholder-text");
+    let selectedSkills = [];
 
-        let selectedSkills = [];
+    function toggleDropdown() {
+    let dropdown = document.getElementById("skills-dropdown");
+    let input = document.getElementById("skills-input");
+    let options = document.querySelectorAll(".skill-option");
 
-        // Toggle dropdown visibility
-        skillsContainer.addEventListener("click", function() {
-            skillsDropdown.classList.toggle("d-none");
-        });
+    dropdown.style.display = "block";
 
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function(event) {
-            if (!skillsContainer.contains(event.target) && !skillsDropdown.contains(event.target)) {
-                skillsDropdown.classList.add("d-none");
+    // If input is empty, show all skills
+    if (input.value.trim() === "") {
+        options.forEach(option => {
+            option.style.display = "block";
+            });
+        }
+    }
+
+
+    function filterSkills() {
+    let input = document.getElementById("skills-input").value.toLowerCase();
+    let options = document.querySelectorAll(".skill-option");
+
+    options.forEach(option => {
+        if (option.textContent.toLowerCase().includes(input)) {
+            option.style.display = "block";
+        } else {
+            option.style.display = "none";
             }
         });
+    }
 
-        // Skill selection
-        document.querySelectorAll(".skill-option").forEach(option => {
-            option.addEventListener("click", function() {
-                const skillId = this.dataset.value;
-                const skillName = this.textContent;
 
-                if (!selectedSkills.some(skill => skill.id === skillId)) {
-                    selectedSkills.push({ id: skillId, name: skillName });
+    function selectSkill(element) {
+        let skillId = element.getAttribute("data-id");
+        let skillName = element.textContent;
 
-                    let skillTag = document.createElement("span");
-                    skillTag.className = "badge badge-success m-1 p-2";
-                    skillTag.innerHTML = `${skillName} <span class="ml-2 text-white remove-skill" style="cursor: pointer;">&times;</span>`;
+        // Prevent duplicate selection
+        if (selectedSkills.some(skill => skill.id === skillId)) return;
 
-                    skillTag.querySelector(".remove-skill").addEventListener("click", function() {
-                        selectedSkills = selectedSkills.filter(skill => skill.id !== skillId);
-                        skillTag.remove();
-                        updateHiddenInput();
-                        if (selectedSkills.length === 0) placeholderText.style.display = "inline";
-                    });
+        selectedSkills.push({ id: skillId, name: skillName });
 
-                    skillsContainer.appendChild(skillTag);
-                    placeholderText.style.display = "none";
-                    updateHiddenInput();
-                }
-                skillsDropdown.classList.add("d-none");
-            });
-        });
+        // Create skill tag inside input field
+        let badge = document.createElement("span");
+        badge.classList.add("skill-tag");
+        badge.setAttribute("data-id", skillId);
+        badge.innerHTML = `${skillName} <span class="remove-skill" onclick="removeSkill(this, '${skillId}')">&times;</span>`;
 
-        function updateHiddenInput() {
-            hiddenSkillsInput.value = selectedSkills.map(skill => skill.id).join(",");
+        document.getElementById("selected-skills").appendChild(badge);
+
+        // Add hidden input for form submission
+        let hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "skills";
+        hiddenInput.value = skillId;
+        badge.appendChild(hiddenInput);
+
+        // Clear input field
+        document.getElementById("skills-input").value = "";
+
+        // Hide dropdown
+        document.getElementById("skills-dropdown").style.display = "none";
+    }
+
+    function removeSkill(element, skillId) {
+        selectedSkills = selectedSkills.filter(skill => skill.id !== skillId);
+        element.parentElement.remove();
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        let dropdown = document.getElementById("skills-dropdown");
+        let input = document.getElementById("skills-input");
+        if (!dropdown.contains(event.target) && event.target !== input) {
+            dropdown.style.display = "none";
         }
     });
 </script>
+
 
 
 {% endblock %}

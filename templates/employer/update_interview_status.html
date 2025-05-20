@@ -1,14 +1,34 @@
-{% extends "base.html" %}
 {% block content %}
-<h2>Update Interview Status</h2>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-success text-white">
+            <h4>Update Interview Status</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Applicant:</strong> {{ interview.application.applicant.get_full_name }}</p>
+            <p><strong>Interview Date:</strong> {{ interview.scheduled_date|date:"M d, Y" }}</p>
+            <p><strong>Current Status:</strong> 
+                <span class="badge 
+                    {% if interview.status == 'scheduled' %} bg-info 
+                    {% elif interview.status == 'completed' %} bg-success 
+                    {% elif interview.status == 'canceled' %} bg-danger {% endif %}">
+                    {{ interview.get_status_display }}
+                </span>
+            </p>
 
-<p>Interview for {{ interview.application.applicant.get_full_name }} - {{ interview.application.job.title }}</p>
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Update Status</button>
-</form>
-
-<a href="{% url 'candidate_management' %}" class="btn btn-secondary">Back</a>
+            <!-- Form to Update Interview Status -->
+            <form method="post">
+                {% csrf_token %}
+                <label for="status" class="form-label"><strong>Change Status:</strong></label>
+                <select name="status" id="status" class="form-select">
+                    <option value="scheduled" {% if interview.status == "scheduled" %}selected{% endif %}>Scheduled</option>
+                    <option value="completed" {% if interview.status == "completed" %}selected{% endif %}>Completed</option>
+                    <option value="canceled" {% if interview.status == "canceled" %}selected{% endif %}>Canceled</option>
+                </select>
+                <button type="submit" class="btn btn-primary mt-3">Update Status</button>
+                <a href="{% url 'interview_management' %}" class="btn btn-secondary mt-3">Back to Interviews</a>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

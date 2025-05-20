@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load static %}
+{% block content %}
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Frequently Asked Questions</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>FAQs</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+
+    <!-- General Questions -->
+    <div class="accordion mb-4" id="faqGeneral">
+        <h4 class="mb-3">General Questions</h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="genQ1">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#genA1">
+                    What is this platform about?
+                </button>
+            </h2>
+            <div id="genA1" class="accordion-collapse collapse show" data-bs-parent="#faqGeneral">
+                <div class="accordion-body">
+                    This is an online job portal system designed to connect employers with potential jobseekers, allowing job posting, application tracking, and career profile management.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="genQ2">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#genA2">
+                    How do I create an account?
+                </button>
+            </h2>
+            <div id="genA2" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                <div class="accordion-body">
+                    Click on the “Sign Up” button, choose your role (Employer or Jobseeker), and fill out the required registration form.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="genQ3">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#genA3">
+                    I forgot my password. What should I do?
+                </button>
+            </h2>
+            <div id="genA3" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                <div class="accordion-body">
+                    Click on “Forgot Password?” on the login page and follow the instructions sent to your email.
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="genQ4">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#genA4">
+                        Is this platform free to use?
+                    </button>
+                </h2>
+                <div id="genA4" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                    <div class="accordion-body">
+                        Yes, both jobseekers and employers can use the platform for free. However, premium features (if any) will be clearly labeled.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="genQ5">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#genA5">
+                        Can I use this system on my phone or tablet?
+                    </button>
+                </h2>
+                <div id="genA5" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                    <div class="accordion-body">
+                        Yes, the system is fully responsive and mobile-friendly. You can access all features using your smartphone or tablet.
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <!-- For Jobseekers -->
+    <div class="accordion mb-4" id="faqJobseeker">
+        <h4 class="mb-3">For Jobseekers</h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="jobQ1">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jobA1">
+                    How can I apply for a job?
+                </button>
+            </h2>
+            <div id="jobA1" class="accordion-collapse collapse" data-bs-parent="#faqJobseeker">
+                <div class="accordion-body">
+                    Login, go to job listings, click a job title, and hit “Apply Now.” Upload your resume/CV and submit your application.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="jobQ2">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jobA2">
+                    Can I apply for multiple jobs?
+                </button>
+            </h2>
+            <div id="jobA2" class="accordion-collapse collapse" data-bs-parent="#faqJobseeker">
+                <div class="accordion-body">
+                    Yes. You can apply for as many jobs as you qualify for. Each application may require a different resume/CV.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="jobQ3">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jobA3">
+                    Where can I view my application status?
+                </button>
+            </h2>
+            <div id="jobA3" class="accordion-collapse collapse" data-bs-parent="#faqJobseeker">
+                <div class="accordion-body">
+                    Visit your dashboard and check the "My Applications" section for all updates and statuses.
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="jobQ4">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jobA4">
+                        Can I save jobs to apply later?
+                    </button>
+                </h2>
+                <div id="jobA4" class="accordion-collapse collapse" data-bs-parent="#faqJobseeker">
+                    <div class="accordion-body">
+                        Yes, you can bookmark jobs and return later to complete the application from your dashboard.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="jobQ5">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jobA5">
+                        Can I upload different CVs for different jobs?
+                    </button>
+                </h2>
+                <div id="jobA5" class="accordion-collapse collapse" data-bs-parent="#faqJobseeker">
+                    <div class="accordion-body">
+                        Yes, the system allows you to upload a unique resume/CV for each application, or you may use a default CV saved in your profile.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="jobQ6">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jobA6">
+                        How do I update my education or experience details?
+                    </button>
+                </h2>
+                <div id="jobA6" class="accordion-collapse collapse" data-bs-parent="#faqJobseeker">
+                    <div class="accordion-body">
+                        Go to the “Update Profile” section, then choose the education or experience tab to add or edit information.
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <!-- For Employers -->
+    <div class="accordion mb-4" id="faqEmployer">
+        <h4 class="mb-3">For Employers</h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="empQ1">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#empA1">
+                    How do I post a job?
+                </button>
+            </h2>
+            <div id="empA1" class="accordion-collapse collapse" data-bs-parent="#faqEmployer">
+                <div class="accordion-body">
+                    From your dashboard, click on "Post a Job", fill in the job details, and submit the form.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="empQ2">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#empA2">
+                    How can I view applicants for a job?
+                </button>
+            </h2>
+            <div id="empA2" class="accordion-collapse collapse" data-bs-parent="#faqEmployer">
+                <div class="accordion-body">
+                    Go to "Job Listings" in your dashboard, click on a job, then click “View Applicants.”
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="empQ3">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#empA3">
+                    Can I edit or close a job posting?
+                </button>
+            </h2>
+            <div id="empA3" class="accordion-collapse collapse" data-bs-parent="#faqEmployer">
+                <div class="accordion-body">
+                    Yes, go to the specific job in your dashboard and choose "Edit" or mark it as “Closed.”
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="empQ4">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#empA4">
+                        Can I edit my company details after registration?
+                    </button>
+                </h2>
+                <div id="empA4" class="accordion-collapse collapse" data-bs-parent="#faqEmployer">
+                    <div class="accordion-body">
+                        Yes. Navigate to “Company Profile” in your dashboard to edit company name, description, address, and logo.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="empQ5">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#empA5">
+                        How do I hire or reject a candidate?
+                    </button>
+                </h2>
+                <div id="empA5" class="accordion-collapse collapse" data-bs-parent="#faqEmployer">
+                    <div class="accordion-body">
+                        Inside the applicant view, you’ll find options to shortlist, reject, or mark a candidate as hired directly from your dashboard.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="empQ6">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#empA6">
+                        Can I schedule interviews through the platform?
+                    </button>
+                </h2>
+                <div id="empA6" class="accordion-collapse collapse" data-bs-parent="#faqEmployer">
+                    <div class="accordion-body">
+                        Yes. After shortlisting a candidate, you can send them an interview invitation with date, time, and method (online or physical).
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+    <!-- Technical & Support -->
+    <div class="accordion mb-4" id="faqSupport">
+        <h4 class="mb-3">Technical & Support</h4>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="techQ1">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#techA1">
+                    The website isn’t loading properly. What can I do?
+                </button>
+            </h2>
+            <div id="techA1" class="accordion-collapse collapse" data-bs-parent="#faqSupport">
+                <div class="accordion-body">
+                    Refresh the page, clear your browser cache, or try a different browser. If the issue persists, contact support.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="techQ2">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#techA2">
+                    Who do I contact for help?
+                </button>
+            </h2>
+            <div id="techA2" class="accordion-collapse collapse" data-bs-parent="#faqSupport">
+                <div class="accordion-body">
+                    Use the <a href="{% url 'contact' %}">Contact Us</a> form to send a query. Our support team will get back to you.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="techQ3">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#techA3">
+                    How do I report a bug or issue?
+                </button>
+            </h2>
+            <div id="techA3" class="accordion-collapse collapse" data-bs-parent="#faqSupport">
+                <div class="accordion-body">
+                    You can report bugs or issues by filling out the contact query form or emailing our support team directly.
+                </div>
+            </div>
+        </div>
+        
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="techQ4">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#techA4">
+                    Is my personal data secure on this platform?
+                </button>
+            </h2>
+            <div id="techA4" class="accordion-collapse collapse" data-bs-parent="#faqSupport">
+                <div class="accordion-body">
+                    Yes. We follow strict data protection practices, and your information is encrypted and stored securely.
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+{% endblock %}

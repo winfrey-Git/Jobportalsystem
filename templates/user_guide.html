@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">User Guide</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>User Guide</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container my-5">
+  <h1 class="mb-4 text-center">User Guide / Manual</h1>
+
+  <section class="mb-5">
+    <h3>1. Introduction</h3>
+    <p>Welcome to the Job Portal System. This guide will help you understand how to use all features of the platform, whether you're a jobseeker or an employer.</p>
+  </section>
+
+  <section class="mb-5">
+    <h3>2. Getting Started</h3>
+    <p><strong>Creating an Account:</strong> Register as either a Jobseeker or an Employer using the sign-up page. Employers are required to enter company details during registration.</p>
+    <p><strong>Logging In:</strong> Use your email and password to access your personalized dashboard.</p>
+  </section>
+
+  <section class="mb-5">
+    <h3>3. For Jobseekers</h3>
+    <ul>
+      <li><strong>Update Profile:</strong> Go to "Edit Profile" to add your education, work experience, and skills.</li>
+      <li><strong>Search Jobs:</strong> Use the search bar on the dashboard or homepage to filter jobs by title, location, or category.</li>
+      <li><strong>Apply for Jobs:</strong> Click “Apply Now” on job listings. You can upload a new resume or use the one saved in your profile.</li>
+      <li><strong>Track Applications:</strong> View your submitted applications, status updates, and feedback from employers in your dashboard.</li>
+    </ul>
+  </section>
+
+  <section class="mb-5">
+    <h3>4. For Employers</h3>
+    <ul>
+      <li><strong>Create Job Posts:</strong> Go to “Post a Job” to add new listings with title, description, requirements, and status.</li>
+      <li><strong>Manage Jobs:</strong> View, edit, or close active job listings from your employer dashboard.</li>
+      <li><strong>View Applicants:</strong> Check applicants for each job with their resumes, profiles, and application date.</li>
+      <li><strong>Shortlist & Hire:</strong> Shortlist qualified candidates, invite them for interviews, or hire directly through the dashboard.</li>
+    </ul>
+  </section>
+
+  <section class="mb-5">
+    <h3>5. Tips & Best Practices</h3>
+    <ul>
+      <li>Keep your profile updated for better visibility.</li>
+      <li>Upload tailored resumes for different jobs.</li>
+      <li>Employers should provide detailed job descriptions to attract the right candidates.</li>
+      <li>Use the FAQs or Contact Form if you encounter issues.</li>
+    </ul>
+  </section>
+
+  <section class="mb-5">
+    <h3>6. Troubleshooting & Support</h3>
+    <p>For help, visit the <a href="{% url 'faqs' %}">FAQs page</a>, use the <a href="{% url 'contact' %}">Contact Query Form</a>, or reach out via Live Chat (if available).</p>
+  </section>
+  <div class="text-center my-4">
+    <a href="{% static 'docs/User_Guide.pdf' %}" class="btn btn-success" download>Download User Guide (PDF)</a>
+  </div>
+</div>
+{% endblock %}

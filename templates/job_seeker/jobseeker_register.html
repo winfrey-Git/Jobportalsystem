@@ -2,7 +2,15 @@
 {% load static %}
 {% block content %}
 
-<!-- Home -->
+<style>
+    label[for="id_agree_to_terms"] {
+    display: none;
+}
+#id_agree_to_terms {
+    display: none;
+}
+</style>
+
 <section class="section-hero overlay inner-page bg-image"
     style="background-image:url('{% static 'images/background.jpg' %}');" id="home-section">
     <div class="container">
@@ -23,7 +31,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 mb-5">
-                <h2 class="mb-4 text-center text-warning">Sign Up To JobPortal</h2>
+                <h2 class="mb-4 mt-3 text-center text-success">Sign Up To JobPortal</h2>
                 {% include 'messages.html' %}
                 
                 {% if form.errors %}
@@ -48,6 +56,7 @@
                     {% if field.name == 'gender' %}
                     <div class="row form-group mb-4">
                         <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-dark">Select Your Gender: </label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="gender" id="male" value="M">
                                 <label class="form-check-label text-dark" for="male">Male</label>
@@ -62,7 +71,7 @@
                     {% else %}
                     
                     <div class="row form-group mb-3">
-                        <div class="col-md-12 mb-3 mb-md-0">
+                        <div class="col-md-12 mb-2 mb-md-0">
                             <label class="text-dark" for="id_{{ field.name }}">{{ field.name }}</label>
                             <input type="{{ field.field.widget.input_type }}" class="form-control" name="{{ field.name }}" 
                             id="id_{{ field.name }}" 
@@ -75,16 +84,50 @@
 
                     {% endif %}
                     {% endfor %}
+                    <div class="form-check mb-3">
+                        <!-- Custom checkbox input field -->
+                        <input type="checkbox" 
+                               name="agree_to_terms" 
+                               id="agree_to_terms" 
+                               class="form-check-input" 
+                               {% if form.agree_to_terms.value %}checked{% endif %} 
+                               required>
+                      
+                        <!-- Custom label for the checkbox -->
+                        <label class="form-check-label" for="agree_to_terms">
+                            I agree to the <a href="{% url 'terms_and_conditions' %}" target="_blank">Terms and Conditions</a>
+                        </label>
+                    
+                        <!-- Error handling for this field -->
+                        {% if form.agree_to_terms.errors %}
+                            <div class="text-danger">{{ form.agree_to_terms.errors }}</div>
+                        {% endif %}
+                    </div>
+                           
+                    
                     <div class="row form-group">
                         <div class="col-md-12">
                             <input type="submit" value="Sign Up" class="btn px-4 btn-success text-white">
                         </div>
                     </div>
-
+                    <p class="mt-3 mb-3">
+                        Already registered? <a href="{% url 'login' %}">Login here</a>
+                    </p>
                 </form>
             </div>
         </div>
     </div>
 </section>
-
+<script>
+    document.getElementById('termsCheckbox').addEventListener('change', function () {
+        document.getElementById('registerBtn').disabled = !this.checked;
+    });
+    document.querySelector("form").addEventListener("submit", function(e) {
+        if (!document.getElementById("id_agree_to_terms").checked) {
+            e.preventDefault();
+            alert("You must agree to the terms and conditions before registering.");
+        }
+    });
+</script>
+    
 {% endblock%}

@@ -1,40 +1,36 @@
-{% extends 'base.html' %}
 {% block content %}
-<div class="container">
-    <h2>Search Resumes</h2>
-    <form method="GET" action="{% url 'search_resumes' %}">
-        <input type="text" name="query" class="form-control" placeholder="Search by skill, location, or keyword">
-        <button type="submit" class="btn btn-primary mt-2">Search</button>
-    </form>
-    <hr>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Skills</th>
-                <th>Experience</th>
-                <th>Location</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for profile in resumes %}
-            <tr>
-                <td>{{ profile.user.get_full_name }}</td>
-                <td>{{ profile.skills }}</td>
-                <td>{{ profile.experience }} years</td>
-                <td>{{ profile.location }}</td>
-                <td>
-                    <a href="{% url 'view_resume' profile.id %}" class="btn btn-info btn-sm">View</a>
-                    <a href="{% url 'save_resume' profile.id %}" class="btn btn-success btn-sm">Save</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5">No resumes found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="container mt-4">
+    <h2 class="mb-3">Saved Resumes</h2>
+
+    {% if saved_resumes %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Applicant Name</th>
+                    <th>Email</th>
+                    <th>Job Applied For</th>
+                    <th>Resume</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for saved in saved_resumes %}
+                <tr>
+                    <td>{{ saved.resume.applicant.user.get_full_name }}</td>
+                    <td>{{ saved.resume.applicant.user.email }}</td>
+                    <td>{{ saved.resume.job.title }}</td>
+                    <td>
+                        <a href="{{ saved.resume.resume.url }}" target="_blank" class="btn btn-primary btn-sm">View Resume</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_saved_resume' saved.id %}" class="btn btn-danger btn-sm">Remove</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="alert alert-info">No resumes saved yet.</p>
+    {% endif %}
 </div>
 {% endblock %}

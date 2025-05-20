@@ -2,40 +2,47 @@
 {% load static %}
 
 {% block content %}
-
-<!-- HERO SECTION -->
 <section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
-    <div class="container">
-        <div class="row py-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb p-2 rounded">
-                    <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-success">Home</a></li>
-                    <li class="breadcrumb-item active text-light" aria-current="page">Jobseeker Dashboard</li>
-                </ol>
-            </nav>
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Jobseeker Dashboard</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Jobseeker Dashboard</strong></span>
         </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<div class="container mt-4">
-    <div class="row">
+<div class="container my-5">
+    <div class="row g-4">
         <!-- Left Sidebar: Profile Section -->
         <div class="col-md-3">
-            <div class="card shadow-sm border-0 text-center p-3">
-                <div class="profile-pic-container mb-3">
-                    {% if user.userprofile.profile_picture %}
-                        <img src="{{ user.userprofile.profile_picture.url }}" class="rounded-circle img-fluid" alt="Profile Picture">
+            <div class="card shadow border-0 text-center p-4 rounded-3 h-100">
+                <div class="profile-pic-container mb-4">
+                    {% if user.jobseeker_profile.profile_picture %}
+                        <img src="{{ user.jobseeker_profile.profile_picture.url }}" class="rounded-circle img-fluid mx-auto" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #28a745;" alt="Profile Picture">
                     {% else %}
-                        <img src="{% static 'default-profile.png' %}" class="rounded-circle img-fluid" alt="Default Profile Picture">
+                        <img src="{% static 'default-profile.png' %}" class="rounded-circle img-fluid mx-auto" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #28a745;" alt="Default Profile Picture">
                     {% endif %}
                 </div>
-                <h5 class="fw-bold">{{ user.get_full_name|default:user.username }}</h5>
-                <p class="text-muted">{{ user.email }}</p>
-                <a href="{% url 'update_profile' %}" class="btn btn-outline-primary btn-sm w-75">Edit Profile</a>
+                <h5 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                <p class="text-muted mb-3">{{ user.email }}</p>
                 
-                <div class="mt-3">
-                    <p class="fw-bold">Profile Completion</p>
-                    <div class="progress">
+                <div class="profile-actions mb-3">
+                    <a href="{% url 'view_profile' %}" class="btn btn-light btn-sm text-success w-100 mb-2 border">
+                        View Complete Profile
+                    </a>
+                    <a href="{% url 'update_profile' %}" class="btn btn-success btn-sm w-100">
+                        Edit Profile
+                    </a>
+                </div>
+                
+                <div class="mt-4 pt-3 border-top">
+                    <p class="fw-bold mb-2">Profile Completion</p>
+                    <div class="progress" style="height: 12px;">
                         <div class="progress-bar bg-success" role="progressbar" style="width: {{ profile_completion|default:'0' }}%;" 
                              aria-valuenow="{{ profile_completion|default:'0' }}" aria-valuemin="0" aria-valuemax="100">
                              {{ profile_completion|default:"0" }}%
@@ -48,139 +55,288 @@
         <!-- Right Section: Dashboard Data -->
         <div class="col-md-9">
             <!-- Search Bar -->
-            <div class="row">
-                <div class="col-md-12 mb-3 d-flex justify-content-end">
-                    <form action="{% url 'dashboard_search_result' %}" method="get" class="w-100" style="max-width: 300px;">
+            <div class="row mb-4">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <form action="{% url 'dashboard_search_result' %}" method="get" class="w-100" style="max-width: 400px;">
                         <div class="input-group">
-                            <input type="text" name="query" class="form-control" placeholder="Search jobs by keyword, company, or title..." required>
-                            <button type="submit" class="input-group-text bg-white border-left-0">
-                                <i class="fas fa-search text-muted"></i>
+                            <input type="text" name="query" class="form-control form-control-lg shadow-sm" placeholder="Search jobs..." required>
+                            <button type="submit" class="btn btn-success">
+                                Search
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <!-- Dashboard Summary Stats -->
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <div class="card shadow-sm border-0 text-center p-3">
-                        <h6>Applications</h6>
-                        <strong class="text-success">{{ total_applications|default:"0" }}</strong>
+            <!-- Dashboard Summary Stats - Keeping icons here as requested -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                        <i class="fas fa-file-alt text-success" style="font-size: 16px; width: 20px;"></i>
+                        <div class="ms-2">
+                            <p class="fw-bold mb-0" style="font-size: 16px;">Applications</p>
+                            <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ total_applications|default:"0" }}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card shadow-sm border-0 text-center p-3">
-                        <h6>Interviews</h6>
-                        <strong class="text-primary">{{ interviews_scheduled|default:"0" }}</strong>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                        <i class="fas fa-calendar-check text-secondary" style="font-size: 16px; width: 20px;"></i>
+                        <div class="ms-2">
+                            <p class="fw-bold mb-0" style="font-size: 16px;">Interview Invites</p>
+                            <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ interviews_invited_count }}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card shadow-sm border-0 text-center p-3">
-                        <h6>Saved Jobs</h6>
-                        <strong class="text-warning">{{ saved_jobs.count }}</strong>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                        <i class="fas fa-bookmark text-secondary" style="font-size: 16px; width: 20px;"></i>
+                        <div class="ms-2">
+                            <p class="fw-bold mb-0" style="font-size: 16px;">Saved Jobs</p>
+                            <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ saved_jobs|length }}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <div class="card shadow-sm border-0 text-center p-3">
-                        <h6>Profile Completion</h6>
-                        <strong class="text-info">{{ profile_completion|default:"0" }}%</strong>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                        <i class="fas fa-chart-pie text-success" style="font-size: 16px; width: 20px;"></i>
+                        <div class="ms-2">
+                            <p class="fw-bold mb-0" style="font-size: 16px;">Profile Completion</p>
+                            <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ profile_completion|default:"0" }}%</p>
+                        </div>
                     </div>
                 </div>
             </div>
-             <!-- Job Applications -->
-             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <div class="card shadow-sm border-0">
-                        <div class="card-header bg-success text-white fw-bold">My Job Applications</div>
+            
+            <!-- Job Applications and Interview Invites -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="card shadow border-0 rounded-3 h-100">
+                        <div class="card-header bg-success text-white fw-bold p-3">
+                            My Job Applications
+                        </div>
                         <ul class="list-group list-group-flush">
                             {% for application in job_applications %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-bottom">
                                     <div>
-                                        <strong>{{ application.job.title }}</strong> at {{ application.job.company_name }}
+                                        <strong class="text-success">{{ application.job.title }}</strong> at {{ application.job.company.company_name }}
                                         <br>
                                         <small class="text-muted">Applied on {{ application.created_at|date:"M d, Y" }}</small>
                                     </div>
-                                    <a href="{% url 'single_job' application.job.id %}" class="btn btn-sm btn-outline-success">View</a>
+                                    <a href="{% url 'single_job' application.job.id %}" class="btn btn-sm btn-outline-success">
+                                        View
+                                    </a>
                                 </li>
                             {% empty %}
-                                <li class="list-group-item text-center text-muted">No applications yet.</li>
+                                <li class="list-group-item text-center text-muted p-4">
+                                    No applications yet.
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>
                 </div>
 
-                <!-- Interview Invites -->
-                <div class="col-md-6 mb-3">
-                    <div class="card shadow-sm border-0">
-                        <div class="card-header bg-primary text-white fw-bold">Interview Invites</div>
+                <div class="col-md-6">
+                    <div class="card shadow border-0 rounded-3 h-100">
+                        <div class="card-header bg-secondary text-white fw-bold p-3">
+                            Interview Invites
+                        </div>
                         <ul class="list-group list-group-flush">
                             {% for interview in interview_invites %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-bottom">
                                     <div>
-                                        <strong>{{ interview.job.title }}</strong> at {{ interview.job.company_name }}
+                                        <strong class="text-success">{{ interview.application.job.title }}</strong> at {{ interview.application.job.company.company_name }}
                                         <br>
-                                        <small class="text-muted">Scheduled for {{ interview.date|date:"M d, Y h:i A" }}</small>
+                                        <small class="text-muted">Scheduled for {{ interview.date|date:"M d, Y" }} at {{ interview.time|time:"h:i A" }}</small>
                                     </div>
-                                    <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                    <a href="{% url 'view_interview' interview.id %}" class="btn btn-sm btn-outline-secondary">
+                                        View
+                                    </a>
                                 </li>
                             {% empty %}
-                                <li class="list-group-item text-center text-muted">No interview invites yet.</li>
+                                <li class="list-group-item text-center text-muted p-4">
+                                    No interview invites yet.
+                                </li>
                             {% endfor %}
                         </ul>
                     </div>
                 </div>
             </div>
-
+                
             <!-- Saved Jobs -->
-            <div class="col-md-12 mb-3">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-secondary text-white fw-bold">Saved Jobs</div>
-                    <ul class="list-group">
-                        {% for saved_job in saved_jobs %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ saved_job.title }}</strong> at {{ saved_job.company_name }}
-                                    <br>
-                                    <small class="text-muted">Category: {{ saved_job.category }}</small>
-                                </div>
-                                <div class="btn-group">
-                                    <a href="{% url 'single_job' saved_job.id %}" class="btn btn-sm btn-outline-primary">View</a>
-                                    <a href="{% url 'save_job' saved_job.id %}" class="btn btn-sm btn-outline-danger">Remove</a>
-                                </div>
-                            </li>
-                        {% empty %}
-                            <li class="list-group-item text-center text-muted">No saved jobs yet.</li>
-                        {% endfor %}
-                    </ul>
+            <div class="row g-4 mb-4">
+                <div class="col-md-12">
+                    <div class="card shadow border-0 rounded-3">
+                        <div class="card-header bg-success text-white fw-bold p-3">
+                            Saved Jobs
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for saved_job in saved_jobs %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-bottom">
+                                    <div>
+                                        <strong class="text-dark">{{ saved_job.title }}</strong> at {{ saved_job.company.company_name }}
+                                        <br>
+                                        <span class="badge bg-light text-dark me-1">{{ saved_job.category }}</span>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="{% url 'single_job' saved_job.id %}" class="btn btn-sm btn-outline-secondary">
+                                            View
+                                        </a>
+                                        <a href="{% url 'save_job' saved_job.id %}" class="btn btn-sm btn-outline-secondary">
+                                            Remove
+                                        </a>
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-center text-muted p-4">
+                                    No saved jobs yet.
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
 
             <!-- Recommended Jobs -->
-            <div class="col-md-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-info text-white fw-bold">Recommended Jobs</div>
-                    <ul class="list-group">
-                        {% for job in recommended_jobs %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ job.title }}</strong> at {{ job.company_name }}
-                                    <br>
-                                    <small class="text-muted">Category: {{ job.category }}</small>
-                                </div>
-                                <div class="btn-group">
-                                    <a href="{% url 'single_job' job.id %}" class="btn btn-sm btn-outline-success">View</a>
-                                    <a href="{% url 'apply_job' job.id %}" class="btn btn-sm btn-success">Apply</a>
-                                </div>
-                            </li>
-                        {% empty %}
-                            <li class="list-group-item text-center text-muted">No recommended jobs available.</li>
-                        {% endfor %}
-                    </ul>
+            <div class="row g-4">
+                <div class="col-md-12">
+                    <div class="card shadow border-0 rounded-3">
+                        <div class="card-header bg-secondary text-white fw-bold p-3">
+                            Recommended Jobs
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for job in recommended_jobs %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-bottom">
+                                    <div>
+                                        <strong class="text-dark">{{ job.title }}</strong> at {{ job.company.company_name }}
+                                        <br>
+                                        <span class="badge bg-light text-dark me-1">{{ job.category }}</span>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="{% url 'single_job' job.id %}" class="btn btn-sm btn-outline-secondary">
+                                            View
+                                        </a>
+                                        <a href="{% url 'apply' job.id %}" class="btn btn-sm btn-success">
+                                            Apply
+                                        </a>
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-center text-muted p-4">
+                                    No recommended jobs available.
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Improved CSS for consistency with home page -->
+<style>
+    .card {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .card-header {
+        font-size: 1.1rem;
+        border-top-left-radius: 8px !important;
+        border-top-right-radius: 8px !important;
+    }
+    
+    .btn {
+        border-radius: 5px;
+        padding: 8px 16px;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-sm {
+        padding: 5px 10px;
+    }
+    
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    
+    .profile-actions .btn {
+        border-radius: 4px;
+        font-weight: 500;
+        padding: 8px 12px;
+        transition: all 0.2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .profile-actions .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .profile-actions .btn-light {
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+    }
+    
+    .profile-actions .btn-light:hover {
+        background-color: #e9ecef;
+    }
+    
+    .progress {
+        height: 12px;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    
+    .progress-bar {
+        transition: width 1.5s ease;
+    }
+    
+    .list-group-item {
+        transition: background-color 0.2s ease;
+        padding: 15px;
+        border-left: none;
+        border-right: none;
+    }
+    
+    .list-group-item:hover {
+        background-color: rgba(40, 167, 69, 0.05);
+    }
+    
+    .badge {
+        padding: 6px 10px;
+        font-weight: normal;
+        border-radius: 4px;
+    }
+    
+    .dashboard-card {
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+    
+    .text-success {
+        color: #28a745 !important;
+    }
+    
+    .bg-success {
+        background-color: #28a745 !important;
+    }
+    
+    .bg-secondary {
+        background-color: #6c757d !important;
+    }
+</style>
 
 {% endblock %}

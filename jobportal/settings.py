@@ -218,3 +218,4 @@ JAZZMIN_UI_TWEAKS = {
         "success": "btn-success"
     }
 }
+CRISPY_TEMPLATE_PACK = 'bootstrap5'  # or 'bootstrap5' if you're using Bootstrap 5

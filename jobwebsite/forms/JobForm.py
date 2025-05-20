@@ -1,6 +1,8 @@
+from taggit.forms import TagWidget
 from django import forms
 from jobwebsite.models import Job
 from ckeditor.widgets import CKEditorWidget
+from datetime import date
 
 class JobForm(forms.ModelForm):
     class Meta:
@@ -25,33 +27,40 @@ class JobForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Software Developer'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Nairobi'}),
             'salary': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., KES 80,000 - KES 84,500'}),
-            'tags': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Use comma-separated values, e.g., Python, JavaScript'}),
-            'deadline_date': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'YYYY-MM-DD', 'type': 'date'}),
+            'tags': TagWidget(attrs={'class': 'form-control', 'placeholder': 'e.g., Python, JavaScript'}),  # ✅ Fix
+            'deadline_date': forms.DateInput(attrs={'class': 'form-control','placeholder': 'YYYY-MM-DD','type': 'date','min': date.today().strftime('%Y-%m-%d'),'max': (date.today().replace(year=date.today().year + 3)).strftime('%Y-%m-%d'),}),
             'description': CKEditorWidget(),
             'responsibilities': CKEditorWidget(),
             'requirements': CKEditorWidget(),
         }
 
-    def clean_type(self):
-        job_type = self.cleaned_data.get('type')
-        if not job_type:
-            raise forms.ValidationError("Job type is required.")
-        return job_type
+    def clean_tags(self):
+        """
+        Ensure tags are properly formatted: 
+        - No extra spaces
+        - Capitalized correctly
+        - No duplicate tags
+        """
+        tags = self.cleaned_data.get('tags', [])
+        cleaned_tags = []
 
-    def clean_category(self):
-        category = self.cleaned_data.get('category')
-        if not category:
-            raise forms.ValidationError("Category is required.")
-        return category
+        for tag in tags:
+            cleaned_tag = tag.strip().title()  # Remove spaces & capitalize first letter
+            cleaned_tags.append(cleaned_tag)
+
+        return cleaned_tags
 
     def save(self, user=None, commit=True):
         if not user:
             raise ValueError("A user must be provided when saving a job.")
-        
+
         job = super().save(commit=False)
         job.user = user  # Assign user correctly
+
         if commit:
             job.save()
-            self.save_m2m()  # Save many-to-many relationships if any
-        return job
+            if 'tags' in self.cleaned_data:
+                job.tags.set(self.cleaned_data['tags'])  # ✅ Assign tags properly
+            self.save_m2m()
 
+        return job

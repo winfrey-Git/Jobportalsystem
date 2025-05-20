@@ -1,42 +1,42 @@
-{% extends "base.html" %}
-
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Schedule Interview</h2>
+<div class="container mt-4">
+    <h2>Schedule Interview</h2>
 
-    <div class="card shadow">
-        <div class="card-body">
-            <h5>Applicant: {{ application.applicant.get_full_name }}</h5>
-            <p><strong>Email:</strong> {{ application.applicant.email }}</p>
-            <p><strong>Job Position:</strong> {{ application.job.title }}</p>
-
-            <form method="post">
-                {% csrf_token %}
-                
-                <div class="mb-3">
-                    <label for="id_date" class="form-label">Interview Date:</label>
-                    {{ form.date }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="id_time" class="form-label">Interview Time:</label>
-                    {{ form.time }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="id_mode" class="form-label">Interview Mode:</label>
-                    {{ form.mode }}
-                </div>
-
-                <div class="mb-3">
-                    <label for="id_interview_link" class="form-label">Interview Link (If Online):</label>
-                    {{ form.interview_link }}
-                </div>
-
-                <button type="submit" class="btn btn-success">Schedule Interview</button>
-                <a href="{% url 'employer_dashboard' %}" class="btn btn-secondary">Cancel</a>
-            </form>
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+            {{ message }}
         </div>
+        {% endfor %}
     </div>
+    {% endif %}
+
+    <form method="post" class="dashboard-form">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="date" class="form-label">Interview Date</label>
+            <input type="date" name="date" class="form-control" required 
+                   min="{{ current_date|date:'Y-m-d' }}" 
+                   max="{{ max_date|date:'Y-m-d' }}">
+        </div>
+        <div class="mb-3">
+            <label for="time" class="form-label">Interview Time</label>
+            <input type="time" name="time" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="mode" class="form-label">Interview Mode</label>
+            <select name="mode" class="form-control">
+                <option value="In-Person">In-Person</option>
+                <option value="Online">Online</option>
+            </select>
+        </div>
+        <div class="mb-3" id="meeting_link_div">
+            <label for="interview_link" class="form-label">Meeting Link (if Online)</label>
+            <input type="url" name="interview_link" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-success">Save Interview</button>
+        <a href="{% url 'interview_management' %}" class="btn btn-secondary dashbord-load">Cancel</a>
+    </form>
 </div>
 {% endblock %}

@@ -2,7 +2,17 @@
 {% load static %}
 {% block content %}
 
-<!-- Home -->
+
+<style>
+    label[for="id_agree_to_terms"] {
+    display: none;
+}
+#id_agree_to_terms {
+    display: none;
+}
+</style>
+
+
 <section class="section-hero overlay inner-page bg-image"
     style="background-image:url('{% static 'images/background.jpg' %}');" id="home-section">
     <div class="container">
@@ -18,48 +28,64 @@
     </div>
 </section>
 
-<section class="section-site">
+<section class="site-section">
     <div class="container">
         <div class="row">
-            <div class="col-md-12 mb-5">
-                <h2 class="mb-4 text-center text-warning">Sign up to Job Portal</h2>
+            <div class="col-lg-12 mb-5">
+                <h2 class="mt-3 mb-4 text-center text-success">Sign Up To JobPortal</h2>
                 {% include 'messages.html' %}
-
+                
                 {% if form.errors %}
                 {% for field in form %}
                 {% for error in field.errors %}
                 <div class="alert alert-danger alert-dismissable">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>{{ field.label }} {{ error|escape }}</strong>
+                    <a href="#" class="close" data-dismiss="alert" alert-label="close">&times;</a>
+                    <strong>{{ field.label|capfirst}} {{ error|escape }}</strong>
                 </div>
                 {% endfor %}
                 {% endfor %}
                 {% for error in form.non_field_errors %}
                 <div class="alert alert-danger alert-dismissable">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>{{ error|escape }}</strong>               
-                 </div>
-                 {% endfor %}
-                 {% endif %}
-
-                 <form method="POST" action="" class="p-4 border rounded" enctype="multipart/form-data">
+                    <a href="#" class="close" data-dismiss="alert" alert-label="close">&times;</a>
+                    <strong>{{ error|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% endif %}
+                <form method="POST" action="" class="p-4 border rounded">
                     {% csrf_token %}
-                    
-                    <!-- User Fields -->
                     <h3 class="text-dark mt-4">Personal Details</h3>
                     {% for field in form %}
+                    {% if field.name == 'gender' %}
                     <div class="row form-group mb-4">
                         <div class="col-md-12 mb-3 mb-md-0">
-                            <label class="text-dark" for="id_{{ field.name }}">{{ field.label }}</label>
+                            <label class="text-dark">Select Your Gender: </label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="male" value="M">
+                                <label class="form-check-label text-dark" for="male">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="male" value="F">
+                                <label class="form-check-label text-dark" for="female">Female</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% else %}
+                    
+                    <div class="row form-group mb-3">
+                        <div class="col-md-12 mb-3 mb-md-0">
+                            <label class="text-dark" for="id_{{ field.name }}">{{ field.name }}</label>
                             <input type="{{ field.field.widget.input_type }}" class="form-control" name="{{ field.name }}" 
                             id="id_{{ field.name }}" 
                             {% if field.name == "password1" %} placeholder="Enter Password" {% endif %}
                             {% if field.name == "password2" %} placeholder="Confirm Password" {% endif %}
                             {% if field.field.widget.attrs.placeholder %} placeholder="{{ field.field.widget.attrs.placeholder }}" {% endif %}>
+
                         </div>
                     </div>
-                    {% endfor %}
 
+                    {% endif %}
+                    {% endfor %}
                     <!-- Company Details -->
                     <h3 class="text-dark mt-4">Company Details</h3>
 
@@ -108,9 +134,21 @@
                     <div class="row form-group mb-4">
                         <div class="col-md-12">
                             <label class="text-dark" for="contact_phone">Contact Phone</label>
-                            <input type="text" class="form-control" name="contact_phone" id="contact_phone" placeholder="Enter contact phone">
+                            <input 
+                                type="tel" 
+                                class="form-control" 
+                                name="contact_phone" 
+                                id="contact_phone" 
+                                placeholder="Enter contact phone" 
+                                pattern="^(\+254|0)?7\d{8}$" 
+                                maxlength="13"
+                                title="Enter a valid Kenyan phone number (e.g., 07XXXXXXXX or +2547XXXXXXXX)"
+                                required
+                                oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
+                            >
                         </div>
                     </div>
+                    
 
                     <div class="row form-group mb-4">
                         <div class="col-md-12">
@@ -118,17 +156,50 @@
                             <input type="url" class="form-control" name="website" id="website" placeholder="Enter company website">
                         </div>
                     </div>
-
+                    <div class="form-check mb-3">
+                        <!-- Custom checkbox input field -->
+                        <input type="checkbox" 
+                               name="agree_to_terms" 
+                               id="agree_to_terms" 
+                               class="form-check-input" 
+                               {% if form.agree_to_terms.value %}checked{% endif %} 
+                               required>
+                      
+                        <!-- Custom label for the checkbox -->
+                        <label class="form-check-label" for="agree_to_terms">
+                            I agree to the <a href="{% url 'terms_and_conditions' %}" target="_blank">Terms and Conditions</a>
+                        </label>
+                    
+                        <!-- Error handling for this field -->
+                        {% if form.agree_to_terms.errors %}
+                            <div class="text-danger">{{ form.agree_to_terms.errors }}</div>
+                        {% endif %}
+                    </div>                  
+                    
                     <div class="row form-group">
                         <div class="col-md-12">
                             <input type="submit" value="Sign Up" class="btn px-4 btn-success text-white">
                         </div>
                     </div>
+
+                    <p class="mt-3">
+                        Already registered? <a href="{% url 'login' %}">Login here</a>
+                    </p>
                  </form>
 
             </div>
         </div>
     </div>
 </section>
-
+<script>
+    document.getElementById('termsCheckbox').addEventListener('change', function () {
+        document.getElementById('registerBtn').disabled = !this.checked;
+    });
+    document.querySelector("form").addEventListener("submit", function(e) {
+        if (!document.getElementById("id_agree_to_terms").checked) {
+            e.preventDefault();
+            alert("You must agree to the terms and conditions before registering.");
+        }
+    });
+</script>
 {% endblock %}

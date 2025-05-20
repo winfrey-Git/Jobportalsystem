@@ -1,17 +1,16 @@
-{% extends 'base.html' %}
 {% block content %}
 
-<div class="container mt-5">
+<div class="container mt-5 mb-4">
     <div class="card">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-success text-white">
             <h4>Employer Profile</h4>
         </div>
         <div class="card-body">
             <div class="row">
                 <!-- Profile Picture / Company Logo -->
                 <div class="col-md-3 text-center">
-                    {% if company.logo %}
-                        <img src="{{ company.logo.url }}" class="img-fluid rounded-circle" alt="Company Logo">
+                    {% if company.company_logo %}
+                        <img src="{{ company.company_logo.url }}" class="img-fluid rounded-circle" alt="Company Logo">
                     {% else %}
                         <img src="/media/default-profile.png" class="img-fluid rounded-circle" alt="Default Logo">
                     {% endif %}
@@ -20,20 +19,40 @@
                 <div class="col-md-9">
                     <h5>{{ employer.get_full_name }}</h5>
                     <p><strong>Email:</strong> {{ employer.email }}</p>
-                    <p><strong>Phone Number:</strong> {{ employer.phone_number }}</p>
                     <p><strong>Gender:</strong> {{ employer.get_gender_display }}</p>
                     <p><strong>Joined:</strong> {{ employer.date_joined|date:"Y-m-d" }}</p>
 
                     <hr>
-                    <h5>Company Details</h5>
-                    <p><strong>Company Name:</strong> {{ company.name }}</p>
+                    <h3 class="text-success mb-3">Company Details</h3>
+                    <p><strong>Company Name:</strong> {{ company.company_name }}</p>
                     <p><strong>Industry:</strong> {{ company.industry }}</p>
                     <p><strong>Website:</strong> <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></p>
                     <p><strong>Contact Email:</strong> {{ company.contact_email }}</p>
-                    <p><strong>Contact Number:</strong> {{ company.contact_number }}</p>
-                    <p><strong>Description:</strong> {{ company.description|safe }}</p>
+                    <p><strong>Contact Number:</strong> {{ company.contact_phone }}</p>
+                    <p><strong>Description:</strong> {{ company.company_description|safe }}</p>
 
-                    <a href="{% url 'edit_employer_profile' %}" class="btn btn-warning">Edit Profile</a>
+                    <a href="{% url 'edit_employer_profile' %}" class="btn btn-warning dashboard-load">Edit Profile</a>
+
+                    <hr class="my-4">
+                    <div class="alert alert-danger" role="alert">
+                        <h5>Delete Account</h5>
+                        <p>
+                            By deleting your account, please note that you will need a different email address to create a new profile 
+                            to post or manage jobs in the future on this website. (<strong>{{ employer.email }}</strong> cannot be used here again).
+                        </p>
+                        <form method="POST" action="{% url 'delete_employer_profile' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete My Account</button>
+                            <div class="form-check mt-3">
+                                <input class="form-check-input" type="checkbox" name="terms_confirmation" id="termsConfirmation" required>
+                                <label class="form-check-label" for="termsConfirmation">
+                                    You accept our <a href="{% url 'terms_and_conditions' %}" target="_blank">Terms and Conditions</a> and <a href="{% url 'privacy_policy' %}" target="_blank">Privacy Policy</a>.
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    </div>                    
                 </div>
             </div>
         </div>

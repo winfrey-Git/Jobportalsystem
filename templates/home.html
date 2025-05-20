@@ -133,17 +133,18 @@
 <section class="py-5 bg-success mb-3 w-100 d-flex">
   <div class="container-fluid">
     {% if request.user.is_authenticated %}
-      {% if request.user.role == "employer" %}
+    {% if request.user.role == "employer" %}
       <div class="row align-items-center">
         <div class="col-md-8">
-          <h2 class="text-white">Want To Hire?</h2>
-          <p class="mb-0 text-white lead">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+          <h2 class="text-white">Ready to manage your job listings?</h2>
+          <p class="mb-0 text-white lead">Manage your job postings and view applications.</p>
         </div>
         <div class="col-md-3 ml-auto">
-          <a href="{% url 'job_posting' %}" class="btn btn-warning btn-block btn-lg">Post Your Job</a>
+          <a href="{% url 'employer_dashboard' %}" class="btn btn-warning btn-block btn-lg">Go to Your Dashboard</a>
         </div>
       </div>
-      {% elif request.user.role == "employee" %}
+
+    {% elif request.user.role == "employee" %}
       <div class="row align-items-center">
         <div class="col-md-8">
           <h2 class="text-white">Looking For A Job?</h2>

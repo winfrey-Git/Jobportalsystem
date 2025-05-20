@@ -2,6 +2,7 @@ from django.shortcuts import render
 from jobwebsite.models import Job, CustomUser
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.utils import timezone
 
 def home_view(request):
     # Fetch only published and open jobs
@@ -16,7 +17,7 @@ def home_view(request):
     total_companies = CustomUser.objects.filter(role='employer').count()
 
     # Get featured jobs (trending jobs)
-    trending_jobs = Job.objects.filter(is_featured=True, is_published=True, status="open").order_by('-posted_date')[:6]
+    trending_jobs = Job.objects.filter(is_featured=True, is_published=True, status="open",deadline_date__gte=timezone.now().date()).order_by('-posted_date')[:6]
 
     # Paginate job listings (3 per page)
     paginator = Paginator(jobs, 3)

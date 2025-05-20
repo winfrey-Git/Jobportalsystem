@@ -1,0 +1,133 @@
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-success">Application Details</h2>
+        <a href="{% url 'candidate_management' %}" class="btn btn-outline-success dashboard-load">Back to List</a>
+    </div>
+
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-header bg-success text-white fw-bold">Applicant Information</div>
+        <div class="card-body">
+            <p><strong>Name:</strong> <a href="{% url 'view_profile' application.applicant.id %}" class="text-decoration-none text-success fw-bold">{{ application.applicant.get_full_name }}</a></p>
+            <p><strong>Email:</strong> <a href="mailto:{{ application.applicant.email }}" class="text-decoration-none">{{ application.applicant.email }}</a></p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-success text-white fw-bold">Resume & Cover Letter</div>
+                <div class="card-body">
+                    <p><strong>Resume:</strong> 
+                        {% if application.resume %}
+                            <a href="{{ application.resume.resume.url }}" class="btn btn-sm btn-outline-primary" target="_blank">Download Resume</a>
+                        {% else %}
+                            <span class="text-muted">No Resume</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Cover Letter:</strong> 
+                        {% if application.cover_letter %}
+                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#coverLetterModal">View Cover Letter</button>
+                        {% else %}
+                            <span class="text-muted">No Cover Letter</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header bg-success text-white fw-bold">Education & Experience</div>
+                <div class="card-body">
+                    <p><strong>Education:</strong></p>
+                    {% if education %}
+                        <ul>
+                            {% for edu in education %}
+                                <li>{{ edu.degree }} - {{ edu.institution }} ({{ edu.year }})</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Not provided</p>
+                    {% endif %}
+        
+                    <p><strong>Experience:</strong></p>
+                    {% if experience %}
+                        <ul>
+                            {% for exp in experience %}
+                                <li>{{ exp.job_title }} at {{ exp.company_in }} ({{ exp.years }} years)</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Not provided</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-header bg-success text-white fw-bold">Application Status</div>
+        <div class="card-body">
+            <form method="post" action="{% url 'update_application_status' application.id %}" class="dashboard-form">
+                {% csrf_token %}
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <select name="status" class="form-select">
+                            <option value="pending" {% if application.status == "pending" %}selected{% endif %}>Pending</option>
+                            <option value="shortlisted" {% if application.status == "shortlisted" %}selected{% endif %}>Shortlisted</option>
+                            <option value="hired" {% if application.status == "hired" %}selected{% endif %}>Hired</option>
+                            <option value="rejected" {% if application.status == "rejected" %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-success">Update Status</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if latest_interview %}
+        <div class="card shadow-sm mb-4 border-0">
+            <div class="card-header {% if latest_interview.status == 'completed' %}bg-success{% elif latest_interview.status == 'canceled' %}bg-danger{% else %}bg-success{% endif %} text-white fw-bold">
+                Latest Interview Status
+            </div>
+            <div class="card-body">
+                <p><strong>Status:</strong> {{ latest_interview.get_status_display }}</p>
+
+                {% if latest_interview.status == "completed" %}
+                    <div class="alert alert-success">
+                        <strong>Interview completed.</strong> You can now proceed to hire the candidate.
+                    </div>
+                {% elif latest_interview.status == "canceled" %}
+                    <a href="{% url 'schedule_interview' application.id %}" class="btn btn-warning dashboard-load">Invite for Interview</a>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="card shadow-sm mb-4 border-0">
+            <div class="card-header bg-warning text-dark fw-bold">Interview Invitation</div>
+            <div class="card-body">
+                <a href="{% url 'schedule_interview' application.id %}" class="btn btn-warning dashboard-load">Invite for Interview</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Cover Letter Modal -->
+<div class="modal fade" id="coverLetterModal" tabindex="-1" aria-labelledby="coverLetterLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cover Letter</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {{ application.cover_letter|linebreaks }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

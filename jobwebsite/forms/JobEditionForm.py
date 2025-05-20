@@ -14,20 +14,15 @@ class JobEditionForm(forms.ModelForm):
                   'description',
                   'tags',
                   'deadline_date',
-                  'company_name',
-                  'company_description',
                   'vacancy',
                   ]
         labels = {
             'title': 'Job Title :',
             'location': 'Job Location :',
-            'salary' : 'Salary :',
+            'salary': 'Salary :',
             'description': 'Job Description :',
             'tags': 'Tags :',
             'deadline_date': 'Submission Deadline :',
-            'company_name': 'Company Name :',
-            'company_description': 'Company Description :',
-            'url': 'Website :'
         }
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'eg: Software Developer'}),
@@ -35,25 +30,24 @@ class JobEditionForm(forms.ModelForm):
             'salary': forms.TextInput(attrs={'placeholder': 'eg: KES 80,000 - KES 84,500'}),
             'tags': forms.TextInput(attrs={'placeholder': 'Use comma separated. eg: Python, JavaScript'}),
             'deadline_date': forms.DateInput(attrs={'placeholder': 'YYYY-MM-DD'}),
-            'company_name': forms.TextInput(attrs={'placeholder': 'Company Name'}),
-            'url': forms.TextInput(attrs={'placeholder': 'https://example.com'})
         }
 
-        def clean_job_type(self):
-            type = self.cleaned_data.get('type')
-            if not type:
-                raise forms.ValidationError("Service is required")
-            return type
+    def clean_type(self):
+        job_type = self.cleaned_data.get('type')
+        if not job_type:
+            raise forms.ValidationError("Job type is required")
+        return job_type
 
-        def cleaned_category(self):
-            category = self.cleaned_data.get('category')
-            if not category:
-                raise forms.ValidationError("category is required")
-            return category
-        
-        def save(self, commit=True):
-            job = super().save(commit=False)
-            if commit:
-                job.save()
-            return job
-        
+    def clean_category(self):
+        category = self.cleaned_data.get('category')
+        if not category:
+            raise forms.ValidationError("Category is required")
+        return category
+
+    def save(self, user=None, commit=True):
+        job = super().save(commit=False)
+        if user:
+            job.user = user  # Set the user if provided
+        if commit:
+            job.save()
+        return job

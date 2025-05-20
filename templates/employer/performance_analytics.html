@@ -1,48 +1,54 @@
-{% extends "base.html" %}
-
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center">
         <h2 class="mb-3">Performance Analytics</h2>
-        <a href="{% url 'print_performance_report' %}" class="btn btn-danger">Download Report as PDF</a>
+        <a href="{% url 'print_performance_report' %}" class="btn btn-success">Download Report as PDF</a>
     </div>
 
     <!-- Summary Cards -->
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Job Posts</h5>
-                    <h3>{{ total_jobs }}</h3>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                <i class="bi bi-briefcase-fill text-success" style="font-size: 16px; width: 20px;"></i>
+                <div class="ms-2">
+                    <p class="fw-bold mb-0" style="font-size: 16px;">Total Job Posts</p>
+                    <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ total_jobs }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Applications</h5>
-                    <h3>{{ total_applications }}</h3>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                <i class="bi bi-envelope-paper-fill text-success" style="font-size: 16px; width: 20px;"></i>
+                <div class="ms-2">
+                    <p class="fw-bold mb-0" style="font-size: 16px;">Total Applications</p>
+                    <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ total_applications }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Shortlisted Candidates</h5>
-                    <h3>{{ total_shortlisted }}</h3>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                <i class="bi bi-star-fill text-warning" style="font-size: 16px; width: 20px;"></i>
+                <div class="ms-2">
+                    <p class="fw-bold mb-0" style="font-size: 16px;">Shortlisted Candidates</p>
+                    <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ total_shortlisted }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-danger mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Hired Candidates</h5>
-                    <h3>{{ total_hired }}</h3>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                <i class="bi bi-person-check-fill text-warning" style="font-size: 16px; width: 20px;"></i>
+                <div class="ms-2">
+                    <p class="fw-bold mb-0" style="font-size: 16px;">Hired Candidates</p>
+                    <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ total_hired }}</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- The rest of your charts and tables remain the same -->
     <!-- Charts & Recent Applications Section -->
     <div class="row">
         <!-- Application Trends Graph -->
@@ -74,7 +80,7 @@
                             <tr>
                                 <td>{{ app.applicant.get_full_name }}</td>
                                 <td>{{ app.job.title }}</td>
-                                <td class="{% if app.status == 'shortlisted' %}text-warning{% elif app.status == 'hired' %}text-success{% else %}text-white{% endif %}">
+                                <td class="{% if app.status == 'shortlisted' %}text-warning{% elif app.status == 'hired' %}text-success{% else %}text-secondary{% endif %}">
                                     {{ app.status }}
                                 </td>
                                 <td>{{ app.created_at|date:"Y-m-d" }}</td>
@@ -124,7 +130,6 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block scripts %}

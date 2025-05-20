@@ -9,86 +9,99 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-    
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     {% load static %}
 
-   
-<!-- Sidebar Styling (Fixed Sidebar with Equal Space and Border) -->
-<style>
-    /* Sidebar styling */
-    #sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: 250px;
-        background: white;
-        overflow-y: auto;
-        z-index: 1000;
-        border-right: 1px solid #ddd; /* Border for separation */
-        padding-right: 15px; /* Extra padding inside sidebar */
-    }
-
-    /* Sidebar navigation links */
-    #sidebar .nav-link {
-        color: #28a745;
-        font-weight: bold;
-        margin-bottom: 10px;
-        transition: background 0.3s, padding 0.3s;
-    }
-
-    #sidebar .nav-link:hover {
-        background-color: #f8f9fa;
-        border-radius: 5px;
-        padding-left: 15px;
-    }
-
-    /* Main content area */
-    #main-content {
-        margin-left: 270px; /* Equal spacing */
-        margin-right: 30px; /* Same as left for balanced spacing */
-        padding-top: 20px;
-        border-left: 1px solid #ddd; /* Border for balance */
-    }
-
-    /* Responsive sidebar on smaller screens */
-    @media (max-width: 768px) {
+    <!-- Sidebar Styling (Fixed Sidebar with Equal Space and Border) -->
+    <style>
+        /* Sidebar styling */
         #sidebar {
             position: fixed;
-            width: 100%;
-            height: auto;
-            z-index: 1050;
             top: 0;
             left: 0;
-            display: none;
-            padding-top: 15px;
+            height: 100vh;
+            width: 220px; /* Reduced width for normal dashboard */
+            background: burlywood;
+            overflow-y: auto;
+            z-index: 1000;
+            border-right: 1px solid #ddd;
+            padding-right: 15px;
         }
-
-        #sidebar.active {
-            display: block;
+    
+        /* Sidebar navigation links */
+        #sidebar .nav-link {
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: background 0.3s, padding 0.3s;
         }
-
+    
+        #sidebar .nav-link:hover {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding-left: 15px;
+        }
+    
+        /* Main content area */
         #main-content {
-            margin-left: 0;
-            margin-right: 0;
+            margin-left: 230px; /* Adjusted for the sidebar width */
+            padding-top: 0;
+            transition: margin-left 0.3s ease-in-out;
         }
-    }
-    .chart-container {
-    width: 100%;
-    max-width: 350px; /* Ensures uniform width */
-    height: 300px; /* Ensures uniform height */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    }
-    canvas {
-        max-height: 100% !important; /* Restricts canvas height */
-    }
-</style>
+    
+        /* Loading spinner */
+        #loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+    
+        /* Responsive sidebar on smaller screens */
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 100%;
+                height: auto;
+                z-index: 1050;
+                top: 0;
+                left: 0;
+                display: none;
+                padding-top: 15px;
+            }
+    
+            #sidebar.active {
+                display: block;
+            }
+    
+            #main-content {
+                margin-left: 0;
+            }
+        }
+    
+        /* Chart container (if applicable) */
+        .chart-container {
+            width: 100%;
+            max-width: 350px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    
+        canvas {
+            max-height: 100% !important;
+        }
+    </style>
+    
 </head>
 <body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
 
     <div class="container-fluid">
         <div class="row">
@@ -109,22 +122,20 @@
                     <h6 class="mt-2 text-dark fw-bold">Welcome, {{ request.user.first_name }}</h6>
                 </div>
                 
-                <!-- Styled Separator -->
                 <hr class="my-3 border border-secondary">
-                <h4 class="text-center text-success fw-bold">Employer Panel</h4>
+                <h4 class="text-center text-dark fw-bold">Employer Panel</h4>
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'home' %}">
                             <i class="fas fa-home"></i> Home
                         </a>
                     </li>
-    
                     <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'employer_dashboard' %}">
+                        <a class="nav-link active dashboard-link" href="{% url 'employer_dashboard' %}" data-url="{% url 'employer_dashboard' %}">
                             <i class="fas fa-tachometer-alt"></i> Dashboard
                         </a>
                     </li>
-    
+                    
                     <!-- Job Postings Section (Collapsible) -->
                     <li class="nav-item">
                         <a class="nav-link d-flex justify-content-between align-items-center" 
@@ -135,235 +146,401 @@
                         <div class="collapse" id="jobPostingsMenu">
                             <ul class="nav flex-column ms-3">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'job_posting' %}">
+                                    <a class="nav-link content-link" href="{% url 'job_posting' %}" data-url="{% url 'job_posting' %}">
                                         <i class="fas fa-plus-circle"></i> Post a Job
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'job_list' %}">
+                                    <a class="nav-link content-link" href="{% url 'job_listing' %}" data-url="{% url 'job_listing' %}">
                                         <i class="fas fa-list"></i> Job Listings
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'active_jobs' %}">
+                                    <a class="nav-link content-link" href="{% url 'active_jobs' %}" data-url="{% url 'active_jobs' %}">
                                         <i class="fas fa-check-circle text-success"></i> Active Jobs
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{% url 'expired_jobs' %}">
+                                    <a class="nav-link content-link" href="{% url 'expired_jobs' %}" data-url="{% url 'expired_jobs' %}">
                                         <i class="fas fa-times-circle text-danger"></i> Expired Jobs
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     </li>
-    
+                    
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'search_resumes' %}">
-                            <i class="fas fa-search"></i> Search Resumes
+                        <a class="nav-link content-link" href="{% url 'manage_jobs' %}" data-url="{% url 'manage_jobs' %}">
+                            <i class="fas fa-tasks"></i> Manage Jobs
                         </a>
                     </li>
+                    
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'candidate_management' %}">
-                            <i class="fas fa-users"></i> Applicant Tracking
+                        <a class="nav-link content-link" href="{% url 'candidate_management' %}" data-url="{% url 'candidate_management' %}">
+                            <i class="fas fa-users"></i> Candidate Management
                         </a>
                     </li>
+                    <!-- Interview Management Section -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'performance_analytics' %}">
+                        <a class="nav-link content-link" href="{% url 'interview_management' %}" data-url="{% url 'interview_management' %}">
+                            <i class="fas fa-calendar-alt"></i> Interview Management
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link content-link" href="{% url 'performance_analytics' %}" data-url="{% url 'performance_analytics' %}">
                             <i class="fas fa-chart-line"></i> Performance Analytics
                         </a>
                     </li>
+   
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'employer_notifications' %}">
-                            <i class="fas fa-bell"></i> Notifications
+                        <a class="nav-link content-link" href="{% url 'view_employer_profile' %}" data-url="{% url 'view_employer_profile' %}">
+                            <i class="fas fa-user"></i> My Account (Profile & Settings)
                         </a>
                     </li>
-    
+                    
+                    <!-- Logout Link -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'view_employer_profile' %}">
-                            <i class="fas fa-user"></i> My Account (Profile & Settings)
+                        <a class="nav-link text-danger" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
                     </li>
                 </ul>
             </nav>
-            <main class="col-md-9 col-lg-10 px-md-5 py-4" id="main-content">
-                <div class="d-flex justify-content-end align-items-center mb-4 flex-wrap">
-                    <a href="{% url 'job_posting' %}" class="btn btn-outline-success btn-sm me-2">
-                        <i class="fas fa-plus-circle"></i> Post a Job
-                    </a>
-                    <a href="{% url 'search_resumes' %}" class="btn btn-outline-success btn-sm">
-                        <i class="fas fa-search"></i> Search Resumes
-                    </a>
-                </div>
-                
-                <div class="container mt-1">
-                    <h3 class="font-weight-bold">Dashboard Overview</h3>
-                    <hr>
-                </div>
-                
-                
-                <!-- Employer Dashboard Statistics -->
-                <div class="row g-3">
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
-                            <i class="bi bi-briefcase-fill text-primary" style="font-size: 16px; width: 20px;"></i>
-                            <div class="ms-2">
-                                <p class="fw-bold mb-0" style="font-size: 16px;">Total Jobs</p>
-                                <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ jobs.count }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
-                            <i class="bi bi-envelope-paper-fill text-warning" style="font-size: 16px; width: 20px;"></i>
-                            <div class="ms-2">
-                                <p class="fw-bold mb-0" style="font-size: 16px;">Applications Received</p>
-                                <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ applications.count }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
-                            <i class="bi bi-calendar-check-fill text-info" style="font-size: 16px; width: 20px;"></i>
-                            <div class="ms-2">
-                                <p class="fw-bold mb-0" style="font-size: 16px;">Scheduled Interviews</p>
-                                <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ scheduled_interviews.count }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
-                            <i class="bi bi-person-fill text-danger" style="font-size: 16px; width: 20px;"></i>
-                            <div class="ms-2">
-                                <p class="fw-bold mb-0" style="font-size: 16px;">Total Applicants</p>
-                                <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ total_applicants }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Graphs Container -->
-                <div class="container mt-4">
-                    <div class="row">
-                        <!-- Applications per Job (Bar Chart) -->
-                        <div class="col-md-6">
-                            <div class="card shadow-sm p-3 border-0 bg-transparent">
-                                <div class="chart-container">
-                                    <canvas id="applicationsChart"></canvas>
+            <!-- Main Content Area -->
+            <main class="col-md-9 col-lg-10 px-md-5 py-3" id="main-content">
+                <div id="dynamic-content">
+                    <!-- Dashboard content will load here initially -->
+                    <div class="d-flex justify-content-end align-items-center mb-1 flex-wrap">
+                        <a href="{% url 'job_posting' %}" class="btn btn-outline-success btn-sm me-2 content-link" data-url="{% url 'job_posting' %}">
+                            <i class="fas fa-plus-circle"></i> Post a Job
+                        </a>
+                    </div>
+                    
+                    <div class="container mt-1">
+                        <h3 class="font-weight-bold">Dashboard Overview</h3>
+                        <hr>
+                    </div>
+                    
+                    <!-- Employer Dashboard Statistics -->
+                    <div class="row g-3">
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                                <i class="bi bi-briefcase-fill text-primary" style="font-size: 16px; width: 20px;"></i>
+                                <div class="ms-2">
+                                    <p class="fw-bold mb-0" style="font-size: 16px;">Total Jobs</p>
+                                    <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ jobs.count }}</p>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Shortlisted vs. Rejected (Pie Chart) -->
-                        <div class="col-md-6">
-                            <div class="card shadow-sm p-3 border-0 bg-transparent">
-                                <div class="chart-container">
-                                    <canvas id="shortlistedChart"></canvas>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                                <i class="bi bi-envelope-paper-fill text-warning" style="font-size: 16px; width: 20px;"></i>
+                                <div class="ms-2">
+                                    <p class="fw-bold mb-0" style="font-size: 16px;">Applications Received</p>
+                                    <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ applications.count }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                                <i class="bi bi-calendar-check-fill text-info" style="font-size: 16px; width: 20px;"></i>
+                                <div class="ms-2">
+                                    <p class="fw-bold mb-0" style="font-size: 16px;">Scheduled Interviews</p>
+                                    <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ scheduled_interviews }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="card dashboard-card p-2 d-flex flex-row align-items-center rounded border-0 bg-light shadow-sm" style="height: 70px;">
+                                <i class="bi bi-person-fill text-danger" style="font-size: 16px; width: 20px;"></i>
+                                <div class="ms-2">
+                                    <p class="fw-bold mb-0" style="font-size: 16px;">Total Applicants</p>
+                                    <p class="text-success fw-bold mb-0" style="font-size: 22px;">{{ total_applicants }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
+                    <!-- Graphs Container -->
+                    <div class="container mt-4">
+                        <div class="row">
+                            <!-- Applications per Job (Bar Chart) -->
+                            <div class="col-md-6">
+                                <div class="card shadow-sm p-3 border-0 bg-transparent">
+                                    <div class="chart-container">
+                                        <canvas id="applicationsChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <!-- Shortlisted vs. Rejected (Pie Chart) -->
+                            <div class="col-md-6">
+                                <div class="card shadow-sm p-3 border-0 bg-transparent">
+                                    <div class="chart-container">
+                                        <canvas id="shortlistedChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Job Applications Section -->
-                <div class="mt-5">
-                    <div class="p-3 rounded bg-success text-white shadow-sm">
-                        <h4 class="fw-bold">Job Applications</h4>
-                    </div>
-                    <div class="mt-3">
-                        {% include 'employer/job_applications.html' %}
-                    </div>
-                </div>
-        
-                <!-- Manage Jobs Section -->
-                <div class="mt-4">
-                    <div class="p-3 rounded bg-success text-white shadow-sm">
-                        <h4 class="fw-bold">Manage Jobs</h4>
-                    </div>
-                    <div class="mt-3">
-                        {% include 'employer/manage_jobs.html' %}
+                    <!-- Job Applications Section -->
+                    <div class="mt-5">
+                        <div class="p-2 rounded bg-success text-white shadow-sm">
+                            <h5 class="fw-bold">Job Applications</h5>
+                        </div>
+                        <div>
+                            {% include 'employer/job_applications.html' %}
+                        </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
-        
 
-<!-- Bootstrap 5.3 JS and Sidebar Toggle Script -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootstrap 5.3 JS and Sidebar Toggle Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize dashboard charts
+            fetchChartData();
+            
+            // Attach global event delegation instead of multiple listeners
+            document.addEventListener('click', function(e) {
+                // Handle content links
+                if (e.target.closest('.content-link')) {
+                    e.preventDefault();
+                    const link = e.target.closest('.content-link');
+                    const url = link.getAttribute('href');
+                    loadContent(url);
+                }
+                
+                // Handle dashboard-load class separately
+                if (e.target.closest('.dashboard-load')) {
+                    e.preventDefault();
+                    const target = e.target.closest('.dashboard-load');
+                    const url = target.getAttribute('href');
+                    loadContent(url);
+                }
+                        // Handle buttons that load content (e.g., Search Results, etc.)
+                if (e.target.closest('.load-content-btn')) {
+                    e.preventDefault();
+                    const target = e.target.closest('.load-content-btn');
+                    const url = target.getAttribute('data-url');  // Assuming buttons have data-url attribute
+                    loadContent(url);
+                }
+            });
+            
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', function() {
+                loadContent(window.location.pathname);
+            });
+            
+            // Handle AJAX form submissions
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                if (form.classList.contains('ajax-form') || form.classList.contains('dashboard-form')) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const actionUrl = form.getAttribute('action') || window.location.href;
+                    
+                    // Add loading message
+                    const loadingMsg = document.createElement('div');
+                    loadingMsg.className = 'alert alert-info';
+                    loadingMsg.textContent = 'Processing...';
+                    form.prepend(loadingMsg);
+                    
+                    fetch(actionUrl, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(html => {
+                        document.getElementById('dynamic-content').innerHTML = html;
+                        history.pushState(null, null, actionUrl);
+                        
+                        // Reinitialize charts if needed
+                        if (actionUrl.includes('employer_dashboard') || actionUrl === '/') {
+                            fetchChartData();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting form:', error);
+                        loadingMsg.className = 'alert alert-danger';
+                        loadingMsg.textContent = 'An error occurred. Please try again.';
+                    });
+                }
+            });
+        });
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        fetchChartData();
-    });
-
-    function fetchChartData() {
-        fetch("{% url 'employer-chart-data' %}")
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error(data.error);
+        function loadContent(url) {
+            // Skip if it's home or logout
+            if (url === "{% url 'home' %}" || url === "{% url 'logout' %}") {
+                window.location.href = url;
                 return;
             }
+            
+            // Show loading spinner
+            const spinner = document.getElementById('loading-spinner');
+            spinner.style.display = 'block';
+            
+            // Create a minimum display time for the spinner to prevent flickering
+            const startTime = Date.now();
+            const minDisplayTime = 300; // milliseconds
+            
+            // Add a transition class to the content
+            const content = document.getElementById('dynamic-content');
+            content.style.opacity = '0.5';
+            content.style.transition = 'opacity 0.3s';
+            
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // Calculate how much time has passed
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+                
+                // Wait for minimum display time before updating content
+                setTimeout(() => {
+                    // Update content
+                    content.innerHTML = html;
+                    history.pushState(null, null, url);
+                    
+                    // Reinitialize specific components based on URL
+                    if (url.includes('employer_dashboard') || url === '/') {
+                        fetchChartData();
+                    }
+                    
+                    // Hide spinner and restore content opacity
+                    spinner.style.display = 'none';
+                    content.style.opacity = '1';
+                }, remainingTime);
+            })
+            .catch(error => {
+                console.error('Error loading content:', error);
+                // Wait for minimum display time before fallback
+                setTimeout(() => {
+                    spinner.style.display = 'none';
+                    window.location.href = url; // Fallback
+                }, Math.max(0, minDisplayTime - (Date.now() - startTime)));
+            });
+        }
 
-            // Applications per Job (Bar Chart)
-            var applicationsCtx = document.getElementById('applicationsChart').getContext('2d');
-            new Chart(applicationsCtx, {
-                type: 'bar',
-                data: {
-                    labels: data.applications.labels,
-                    datasets: [{
-                        label: 'Applications Received',
-                        data: data.applications.data,
-                        backgroundColor: ['#4CAF50', '#FF9800', '#2196F3', '#9C27B0', '#F44336'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Applications Received per Job',
-                            font: { size: 16 }
-                        }
+        function fetchChartData() {
+            fetch("{% url 'employer-chart-data' %}")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                    return;
+                }
+
+                let maxApplications = Math.max(...data.applications.data, 5);
+                let yAxisMax = Math.ceil(maxApplications / 5) * 5;
+
+                // Applications per Job (Bar Chart)
+                var applicationsCtx = document.getElementById('applicationsChart').getContext('2d');
+                new Chart(applicationsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.applications.labels,
+                        datasets: [{
+                            data: data.applications.data,
+                            backgroundColor: ['#4CAF50', '#FF9800', '#2196F3', '#9C27B0', '#F44336'],
+                            borderWidth: 1,
+                            barThickness: 30,
+                            maxBarThickness: 40,
+                        }]
                     },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-
-            // Shortlisted vs. Rejected (Pie Chart)
-            var shortlistedCtx = document.getElementById('shortlistedChart').getContext('2d');
-            new Chart(shortlistedCtx, {
-                type: 'pie',
-                data: {
-                    labels: data.shortlisted.labels,
-                    datasets: [{
-                        data: data.shortlisted.data,
-                        backgroundColor: ['#4CAF50', '#F44336']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Shortlisted vs. Rejected Applicants',
-                            font: { size: 16 }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Applications Received per Job',
+                                font: { size: 16 }
+                            },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Job Titles'
+                                },
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 45,
+                                    minRotation: 0
+                                },
+                                grid: { display: false }
+                            },
+                            y: { 
+                                beginAtZero: true,
+                                max: yAxisMax,
+                                ticks: { 
+                                    stepSize: 1
+                                },
+                                grid: { color: 'rgba(200, 200, 200, 0.3)' }
+                            }
                         }
                     }
-                }
-            });
-        })
-        .catch(error => console.error('Error fetching chart data:', error));
-    }
-</script>
+                });
+                
+                // Shortlisted vs. Rejected (Pie Chart)
+                var shortlistedCtx = document.getElementById('shortlistedChart').getContext('2d');
+                new Chart(shortlistedCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: data.shortlisted.labels,
+                        datasets: [{
+                            data: data.shortlisted.data,
+                            backgroundColor: ['#4CAF50', '#F44336']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Shortlisted vs. Rejected Applicants',
+                                font: { size: 16 }
+                            },
+                            legend: {
+                                position: 'right',
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching chart data:', error));
+        }
+    </script>
+</body>
+</html>

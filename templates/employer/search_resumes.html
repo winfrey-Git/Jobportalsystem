@@ -1,11 +1,9 @@
-{% extends 'base.html' %}
-
 {% block content %}
 <div class="container mt-4">
     <h2>Search Resumes</h2>
-
     <!-- Search Form -->
-    <form method="GET" action="{% url 'search_resumes' %}" class="mb-3">
+    <form method="GET" action="#" class="mb-3 ajax-form" data-url="{% url 'search_resumes' %}">
+        {% csrf_token %}
         <div class="input-group">
             <input type="text" name="q" class="form-control" placeholder="Search by skill, experience, or keyword..." value="{{ query }}">
             <button type="submit" class="btn btn-primary">Search</button>
@@ -29,27 +27,40 @@
             <tr>
                 <td>{{ resume.applicant.user.get_full_name }}</td>
                 <td>
-                    {{ resume.skills_list|join:", " }}
-                </td>
-                
-                <td>
-                    {% if resume.applicant.userprofile.experience %}
-                        {{ resume.applicant.userprofile.experience }}
+                    {% if resume.skills_list %}
+                        {{ resume.skills_list|join:", " }}
                     {% else %}
                         <span class="text-muted">Not specified</span>
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'view_resume' resume.id %}" class="btn btn-info btn-sm">View</a>
+                    {% if resume.experience %}
+                        {% for exp in resume.experience %}
+                            <div>
+                                <strong>{{ exp.job_title }}</strong> at {{ exp.company_in }} ({{ exp.years }} years)
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-muted">Not specified</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'view_resume' resume.id %}" class="btn btn-warning btn-sm">View Resume</a>
                     <a href="{% url 'save_resume' resume.id %}" class="btn btn-success btn-sm">Save</a>
                 </td>
             </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" class="text-center text-danger">No resumes found.</td>
-            </tr>
             {% endfor %}
+            
         </tbody>
     </table>
+
+    <!-- Display success or info messages -->
+    {% if messages %}
+        <div class="mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

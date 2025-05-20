@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.db import transaction  # Import transaction to handle atomic operations
+from django.db import transaction
 from jobwebsite.forms.EmployerRegistration import EmployerRegistration
 from jobwebsite.models import Company
 
@@ -11,17 +11,27 @@ def Employer_Registration_View(request):
             try:
                 with transaction.atomic():  # Ensure both user and company details are saved together
                     user = form.save()  # Save the user first
-
-                    # Get company details directly from request.POST
+                    
+                    # Check if the user already has a company (if required)
+                    if Company.objects.filter(user=user).exists():
+                        messages.error(request, "You already have a company registered with this email.")
+                        return redirect('employer_registration')  # Redirect back to registration page
+                    
+                    # Get company details from request.POST
                     company_name = request.POST.get('company_name', '').strip()
                     company_address = request.POST.get('company_address', '').strip()
                     industry = request.POST.get('industry', '').strip()
                     company_description = request.POST.get('company_description', '').strip()
-                    company_logo = request.FILES.get('company_logo', None)  # Handle optional file upload
+                    company_logo = request.FILES.get('company_logo', None)
                     contact_email = request.POST.get('contact_email', '').strip()
                     contact_phone = request.POST.get('contact_phone', '').strip()
                     website = request.POST.get('website', '').strip()
 
+                    # Validate required company fields
+                    if not company_name or not industry:
+                        messages.error(request, "Company name and industry are required fields.")
+                        return redirect('employer_registration')
+                    
                     # Create the company and link it to the employer
                     company = Company.objects.create(
                         user=user,  # Link company to the employer

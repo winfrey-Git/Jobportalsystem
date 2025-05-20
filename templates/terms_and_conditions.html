@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Terms and Conditions{% endblock %}
+
+{% load static %}
+{% block content %}
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Terms and Conditions</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Terms and Conditions</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container mt-5">
+    <h2 class="text-center">Terms and Conditions</h2>
+    <hr>
+
+    <h4>1. Introduction</h4>
+    <p>Welcome to our Job Portal System. By registering and using our platform, you agree to comply with these Terms and Conditions. Please read them carefully before using our services.</p>
+
+    <h4>2. User Accounts</h4>
+    <p>To access certain features, users must create an account. You agree to provide accurate and complete information. The platform reserves the right to suspend accounts that violate these terms.</p>
+
+    <h4>3. Responsibilities of Employers</h4>
+    <ul>
+        <li>Employers must provide accurate job descriptions.</li>
+        <li>Discrimination or misleading job postings are prohibited.</li>
+        <li>Employers must respect applicants' privacy and data.</li>
+    </ul>
+
+    <h4>4. Responsibilities of Jobseekers</h4>
+    <ul>
+        <li>Jobseekers must provide truthful information in resumes and applications.</li>
+        <li>Fraudulent applications or misleading details are not allowed.</li>
+        <li>Jobseekers must not misuse employer contact details.</li>
+    </ul>
+
+    <h4>5. Data Privacy</h4>
+    <p>By using our platform, you consent to our collection and use of your data as outlined in our <a href="{% url 'privacy_policy' %}">Privacy Policy</a>.</p>
+
+    <h4>6. Prohibited Activities</h4>
+    <p>The following activities are strictly prohibited:</p>
+    <ul>
+        <li>Posting fraudulent job listings.</li>
+        <li>Harassing other users or engaging in spam activities.</li>
+        <li>Unauthorized access or hacking attempts on the platform.</li>
+    </ul>
+
+    <h4>7. Modifications and Updates</h4>
+    <p>We reserve the right to update these terms at any time. Users will be notified of significant changes, and continued use of the platform constitutes acceptance of the revised terms.</p>
+
+    <h4>8. Termination of Accounts</h4>
+    <p>We may suspend or terminate accounts that violate these terms without prior notice.</p>
+
+    <h4>9. Contact Us</h4>
+    <p>If you have any questions about these Terms and Conditions, please contact us at <a href="mailto:support@yourjobportal.com">support@yourjobportal.com</a>.</p>
+
+    <!-- Back to Registration Button (Jobseeker or Employer) -->
+    <div class="text-center mt-4">
+        {% if request.META.HTTP_REFERER and 'employer_registration' in request.META.HTTP_REFERER %}
+            <a href="{% url 'employer_registration' %}" class="btn btn-success mb-4">Back to Employer Registration</a>
+        {% else %}
+            <a href="{% url 'jobseeker_register' %}" class="btn btn-success mb-4">Back to Jobseeker Registration</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

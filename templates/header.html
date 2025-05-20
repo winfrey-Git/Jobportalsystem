@@ -23,33 +23,32 @@
           <li class="nav-item px-3">
             <a class="nav-link text-dark" href="{% url 'contact' %}">Contact</a>
           </li>
+          <li class="nav-item px-3 ">
+            <a class="nav-link text-dark" href="{% url 'faqs' %}">FAQs</a>
+          </li>
         </ul>
 
         <ul class="navbar-nav ms-auto d-flex align-items-center">
           {% if user.is_authenticated %}
-            {% if user.role == "employer" %}
-              <li class="nav-item px-2">
-                <a class="nav-link text-dark" href="{% url 'employer_dashboard' %}">
-                  <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-              </li>
-              <li class="nav-item px-2">
-                <a class="nav-link text-dark" href="{% url 'view_employer_profile' %}">
-                  <i class="fas fa-user-circle"></i> Profile
-                </a>
-              </li>
-            {% elif user.role == "employee" %}
-              <li class="nav-item px-2">
-                <a class="nav-link text-dark" href="{% url 'jobseeker_dashboard' %}">
-                  <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-              </li>
-              <li class="nav-item px-2">
-                <a class="nav-link text-dark" href="{% url 'view_profile' %}">
-                  <i class="fas fa-user-circle"></i> Profile
-                </a>
-              </li>
-            {% endif %}
+          {% if user.role == "employee" %}
+          <li class="nav-item px-2">
+            <a class="nav-link text-dark" href="{% url 'jobseeker_dashboard' %}">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item px-2">
+            <a class="nav-link text-dark" href="{% url 'view_profile' %}">
+              <i class="fas fa-user-circle"></i> Profile
+            </a>
+          </li>
+        {% elif user.role == "employer" %}
+          <li class="nav-item px-2">
+            <a class="nav-link text-dark" href="{% url 'employer_dashboard' %}">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+          </li>
+        {% endif %}
+        
 
             <li class="nav-item px-2">
               <a class="btn btn-danger text-white" href="{% url 'logout' %}">Logout</a>

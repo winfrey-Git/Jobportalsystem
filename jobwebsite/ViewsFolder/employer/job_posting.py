@@ -7,22 +7,24 @@ from jobwebsite.forms.JobForm import JobForm
 
 @login_required
 def create_job_view(request):
-    user = request.user  # Get the logged-in user
+    user = request.user
     categories = Category.objects.all()
 
-    # Check if the user has a company
     try:
-        company = user.company  # Access the OneToOneField relationship from User to Company
+        company = user.company
     except Company.DoesNotExist:
         messages.error(request, "You need to create a company profile before posting a job.")
-        return redirect("create_company")  # Redirect to company creation page
+        return redirect("create_company")
 
     if request.method == 'POST':
         form = JobForm(request.POST, request.FILES)
         if form.is_valid():
-            job = form.save(user=user, commit=False)  # Pass user explicitly
-            job.company = company  # Associate with employer's company
-            job.save()  # Now save the job instance
+            job = form.save(user=user, commit=False)
+            job.company = company
+            job.save()  # Save the job instance first
+
+            form.instance = job  # Very important if form was customized
+            form.save_m2m()  # 🔥 Save the many-to-many fields like tags!
 
             messages.success(request, 'You have successfully posted your job! Please wait for review.')
             return redirect(reverse("single_job", kwargs={'id': job.id}))

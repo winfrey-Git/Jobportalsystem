@@ -19,32 +19,45 @@
       <div class="col-6 col-md-3 mb-4 mb-md-0">
         <h5 class="text-uppercase text-warning">Company</h5>
         <ul class="list-unstyled">
-          <li><a href="#" class="text-light">About Us</a></li>
-          <li><a href="#" class="text-light">Career</a></li>
-          <li><a href="#" class="text-light">Blog</a></li>
+          <li><a href="{% url 'about' %}" class="text-light">About Us</a></li>
+          <li><a href="{% url 'job_list' %}" class="text-light">Careers</a></li>
+          <li><a href="{% url 'blog_list' %}" class="text-light">Blog</a></li>
         </ul>
       </div>
+      
 
    
       <div class="col-6 col-md-3 mb-4 mb-md-0">
         <h5 class="text-uppercase text-warning">Support</h5>
         <ul class="list-unstyled">
-          <li><a href="#" class="text-light">Support</a></li>
-          <li><a href="#" class="text-light">Privacy</a></li>
-          <li><a href="#" class="text-light">Terms of Service</a></li>
+          <li><a href="{% url 'faqs' %}" class="text-light">FAQs</a></li>
+          <li><a href="{% url 'user_guide' %}" class="text-light">User Guide</a></li> <!-- NEW LINK -->
+          <li><a href="{% url 'privacy_policy' %}" class="text-light">Privacy Policy</a></li>
+          <li><a href="{% url 'terms_and_conditions' %}" class="text-light">Terms of Service</a></li>
         </ul>
       </div>
+      
+      
 
      
       <div class="col-6 col-md-3 mb-4 mb-md-0">
         <h5 class="text-uppercase text-warning">Contact Us</h5>
         <div class="footer-social d-flex gap-3">
-          <a href="#" class="text-light"><i class="fab fa-facebook fa-lg"></i></a>
-          <a href="#" class="text-light"><i class="fab fa-twitter fa-lg"></i></a>
-          <a href="#" class="text-light"><i class="fab fa-instagram fa-lg"></i></a>
-          <a href="#" class="text-light"><i class="fab fa-linkedin fa-lg"></i></a>
+          <a href="https://www.facebook.com/yourprofile" class="text-light" target="_blank" title="Facebook">
+            <i class="fab fa-facebook fa-lg"></i>
+          </a>
+          <a href="https://twitter.com/yourprofile" class="text-light" target="_blank" title="Twitter">
+            <i class="fab fa-twitter fa-lg"></i>
+          </a>
+          <a href="https://www.instagram.com/" class="text-light" target="_blank" title="Instagram">
+            <i class="fab fa-instagram fa-lg"></i>
+          </a>
+          <a href="https://www.linkedin.com/feed/" class="text-light" target="_blank" title="LinkedIn">
+            <i class="fab fa-linkedin fa-lg"></i>
+          </a>
         </div>
       </div>
+      
     </div>
 
    

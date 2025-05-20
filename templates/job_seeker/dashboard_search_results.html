@@ -1,22 +1,43 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+    <div class="container">
+      <div class="row py-3">
+        <div class="col-md-7">
+          <h1 class="text-white font-weight-bold">Search Result</h1>
+          <div class="custom-breadcrumbs">
+            <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+            <a href="{% url 'jobseeker_dashboard' %}" class="text-success">Dashboard</a> <span class="mx-2 slash">/</span>
+            <span class="text-white"><strong>Search Result</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 <div class="container mt-4">
     <h4>Search Results for "{{ query }}"</h4>
     {% if jobs %}
-        <ul class="list-group">
+        <div class="list-group">
             {% for job in jobs %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{ job.title }}</strong> at {{ job.company_name }}
-                        <br>
-                        <small class="text-muted">Location: {{ job.location }}</small>
-                        <br>
-                        <small class="text-muted">Category: {{ job.category }}</small>
+                <div class="list-group-item d-flex align-items-center p-3 mb-3 shadow-sm border rounded">
+                    <!-- Company Logo -->
+                    {% if job.company.company_logo %}
+                        <img src="{{ job.company.company_logo.url }}" alt="Company Logo" class="me-3" width="60" height="60" style="object-fit: cover; border-radius: 10px;">
+                    {% else %}
+                        <img src="/static/default-logo.png" alt="Default Logo" class="me-3" width="60" height="60" style="object-fit: cover; border-radius: 10px;">
+                    {% endif %}
+                    
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1"><strong>{{ job.title }}</strong> at {{ job.company.company_name }}</h6>
+                        <small class="text-muted">Category: {{ job.category.name }}</small>
                     </div>
-                    <a href="{% url 'job_detail' job.id %}" class="btn btn-sm btn-outline-info">View</a>
-                </li>
+                    
+                    <a href="{% url 'single_job' job.id %}" class="btn btn-sm btn-outline-success">View</a>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
         <p class="text-muted">No matching jobs found.</p>
     {% endif %}

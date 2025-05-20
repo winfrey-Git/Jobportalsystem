@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy{% endblock %}
+
+{% load static %}
+{% block content %}
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Privacy Policy</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Privacy Policy</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container mt-5">
+    <h2 class="text-center">Privacy Policy</h2>
+    <hr>
+
+    <h4>1. Introduction</h4>
+    <p>Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your personal information when you use our Job Portal System.</p>
+
+    <h4>2. Information We Collect</h4>
+    <p>We collect the following types of information:</p>
+    <ul>
+        <li><strong>Personal Information:</strong> Name, email address, phone number, and other details provided during registration.</li>
+        <li><strong>Profile Information:</strong> Resume, work experience, education, and job preferences.</li>
+        <li><strong>Employer Information:</strong> Company name, job listings, and contact details.</li>
+        <li><strong>Usage Data:</strong> IP address, browser type, and interactions with the platform.</li>
+    </ul>
+
+    <h4>3. How We Use Your Information</h4>
+    <p>We use your information to:</p>
+    <ul>
+        <li>Provide job-matching services for jobseekers and employers.</li>
+        <li>Improve platform functionality and user experience.</li>
+        <li>Send job recommendations and system updates.</li>
+        <li>Ensure security and prevent fraud.</li>
+    </ul>
+
+    <h4>4. Data Sharing and Disclosure</h4>
+    <p>We do not sell or rent personal data. However, we may share data with:</p>
+    <ul>
+        <li>Employers when you apply for a job.</li>
+        <li>Service providers assisting in platform operations.</li>
+        <li>Legal authorities if required by law.</li>
+    </ul>
+
+    <h4>5. Data Security</h4>
+    <p>We implement security measures to protect your data, including encryption and restricted access. However, no system is 100% secure, so we encourage users to protect their account credentials.</p>
+
+    <h4>6. Your Rights</h4>
+    <p>You have the right to:</p>
+    <ul>
+        <li>Access and update your personal information.</li>
+        <li>Delete your account and associated data.</li>
+        <li>Opt out of promotional emails.</li>
+    </ul>
+
+    <h4>7. Cookies and Tracking</h4>
+    <p>We use cookies to enhance your experience. You can manage cookie settings through your browser.</p>
+
+    <h4>8. Changes to This Policy</h4>
+    <p>We may update this Privacy Policy. Continued use of the platform implies acceptance of any updates.</p>
+
+    <h4>9. Contact Us</h4>
+    <p>If you have questions about our Privacy Policy, contact us at <a href="mailto:support@yourjobportal.com">support@yourjobportal.com</a>.</p>
+
+    <!-- Back to Registration Button (Jobseeker or Employer) -->
+    <div class="text-center mt-4">
+        {% if request.META.HTTP_REFERER and 'employer_registration' in request.META.HTTP_REFERER %}
+            <a href="{% url 'employer_registration' %}" class="btn btn-success mb-3">Back to Employer Registration</a>
+        {% else %}
+            <a href="{% url 'jobseeker_register' %}" class="btn btn-success mb-3">Back to Jobseeker Registration</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

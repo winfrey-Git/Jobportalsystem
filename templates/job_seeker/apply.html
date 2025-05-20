@@ -1,70 +1,233 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
-
+{% load static %}
 {% block content %}
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('{% static 'images/background.jpg' %}');" id="home-section">
+  <div class="container">
+    <div class="row py-3">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Apply for Job</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{% url 'home' %}" class="text-success">Home</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Apply</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-header bg-success text-white text-center">
-                    <h4>Apply for {{ job.title }}</h4>
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-success text-white text-center py-3">
+                    <h4 class="mb-0">Apply for {{ job.title }}</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     {% if messages %}
                         {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
                         {% endfor %}
                     {% endif %}
 
                     <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                         {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Cover Letter</label>
-                            <textarea name="cover_letter" class="form-control" rows="4" required></textarea>
+
+                        <!-- Cover Letter -->
+                        <div class="mb-4">
+                            <label for="{{ application_form.cover_letter.id_for_label }}" class="form-label fw-bold">
+                                Cover Letter
+                            </label>
+                            {{ application_form.cover_letter }}
+                            <div class="invalid-feedback">
+                                Please provide a cover letter.
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="text" name="phone" class="form-control" required>
+                        <!-- Phone Number with Kenyan Format Validation -->
+                        <div class="mb-4">
+                            <label for="{{ application_form.phone.id_for_label }}" class="form-label fw-bold">
+                                Phone Number
+                            </label>
+                            {{ application_form.phone }}
+                            <small class="form-text text-muted d-block mt-1">
+                                Format: 07XXXXXXXX, 01XXXXXXXX, or +254XXXXXXXX
+                            </small>
+                            <div class="invalid-feedback" id="phone-error">
+                                Please enter a valid Kenyan phone number.
+                            </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Upload Resume (PDF, DOCX)</label>
-                            {{ resume_form.resume }}
-                            <small class="form-text text-muted">You can upload a different CV for this job.</small>
+                        <!-- Resume Section -->
+                        <div class="mb-4">
+                            <div class="mb-3" id="resume-upload-container">
+                                <label for="{{ resume_form.resume.id_for_label }}" class="form-label fw-bold">
+                                    Upload Resume (Required)
+                                </label>
+                                {{ resume_form.resume }}
+                                <small class="form-text text-muted d-block mt-1">
+                                    PDF or DOCX (max 5MB). This resume will be saved only for this application.
+                                </small>
+                                {% if resume_form.resume.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ resume_form.resume.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success">Apply Now</button>
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                Apply Now
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
 
-            <div class="text-center mt-3">
-                <a href="{% url 'single_job' id=job.id %}" class="btn btn-outline-secondary">Back to Job Details</a>
+            <div class="text-center mt-4">
+                <a href="{% url 'single_job' id=job.id %}" class="btn btn-outline-secondary mb-3">
+                    Back 
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap Validation Script -->
 <script>
-    (function () {
-        'use strict'
-        var forms = document.querySelectorAll('.needs-validation')
-        Array.prototype.slice.call(forms)
-            .forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-    })()
+    document.addEventListener('DOMContentLoaded', function() {
+        // ========== Phone Validation Logic ==========
+        const phoneInput = document.getElementById('{{ application_form.phone.id_for_label }}');
+        
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                // Allow only numbers and +
+                this.value = this.value.replace(/[^0-9+]/g, '');
+                
+                const input = this.value;
+                const isInternationalFormat = input.startsWith('+254');
+                const isLocalFormat = /^0[17]/.test(input);
+                
+                // +254 format: Max 13 chars (+254XXXXXXXX)
+                if (isInternationalFormat && input.length > 13) {
+                    this.value = input.slice(0, 13);
+                    return;
+                }
+                
+                // 254 format: Max 12 chars (254XXXXXXXX)
+                if (input.startsWith('254') && input.length > 12) {
+                    this.value = input.slice(0, 12);
+                    return;
+                }
+                
+                // 07/01 format: Max 10 chars (07XXXXXXXX)
+                if (isLocalFormat && input.length > 10) {
+                    this.value = input.slice(0, 10);
+                    return;
+                }
+            });
+    
+            // Validation on blur
+            phoneInput.addEventListener('blur', function() {
+                const phone = this.value;
+                const isValid = /^(\+254|254|0)[17]\d{8}$/.test(phone);
+                
+                if (isValid) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                }
+            });
+    
+            // Initialize validation state
+            if (phoneInput.value) {
+                phoneInput.dispatchEvent(new Event('blur'));
+            }
+        }
+    
+        // ========== Form Submission Validation ==========
+        const form = document.querySelector('.needs-validation');
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                let isValid = true;
+                
+                // Validate phone if it exists
+                if (phoneInput && !/^(\+254|254|0)[17]\d{8}$/.test(phoneInput.value)) {
+                    phoneInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+                
+                // Validate cover letter
+                const coverLetterInput = document.getElementById('{{ application_form.cover_letter.id_for_label }}');
+                if (coverLetterInput && !coverLetterInput.value.trim()) {
+                    coverLetterInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+                
+                // Validate resume
+                const resumeInput = document.getElementById('{{ resume_form.resume.id_for_label }}');
+                if (resumeInput && !resumeInput.value) {
+                    resumeInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        }
+    });
 </script>
 
+<style>
+    /* Custom styles for form elements */
+    .card {
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+    }
+    
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+        border-color: #28a745;
+    }
+    
+    .btn-success {
+        transition: all 0.2s ease;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+    
+    .is-valid {
+        border-color: #28a745 !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important;
+        padding-right: calc(1.5em + 0.75rem) !important;
+        background-repeat: no-repeat !important;
+        background-position: right calc(0.375em + 0.1875rem) center !important;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) !important;
+    }
+    
+    /* Add fade-in animation for alerts */
+    .alert {
+        animation: fadeIn 0.5s;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}

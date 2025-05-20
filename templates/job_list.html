@@ -30,10 +30,10 @@
         <div class="col-md-6 col-lg-4 mb-4">
           <div class="job-item p-4 border rounded bg-white shadow-sm text-center">
             {% if job.company and job.company.company_logo %}
-            <div class="mb-3">
-              <img src="{{ job.company.company_logo.url }}" alt="{{ job.company.name }} Logo" class="img-fluid rounded-circle" style="max-width: 100px; height: auto;">
-            </div>
+            <img src="{{ job.company.company_logo.url }}" alt="{{ job.company.name }} Logo" class="img-fluid rounded-circle" style="max-width: 100px; height: auto;">
             {% endif %}
+        
+        
           
 
             <h4 class="text-success">{{ job.title }}</h4>

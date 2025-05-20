@@ -1,5 +1,6 @@
-{% extends 'base.html' %}
+{{% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <section class="section-hero overlay inner-page bg-image" style="background-image:url('{% static 'images/background.jpg' %}');" id="home-section">
     <div class="container">
@@ -14,94 +15,256 @@
         </div>
     </div>
 </section>
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card shadow-lg border-0">
-                <div class="card-body text-center">
-                    <img src="{{ user_profile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3 border" width="150">
-                    <h4 class="text-success">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h4>
-                    <p class="text-muted">{{ user_profile.user.email }}</p>
-                    {% if request.user == user_profile.user %}
-                    <a href="{% url 'update_profile' %}" class="btn btn-success btn-sm">Edit Profile</a>
-                    {% endif %}
 
+<!-- Main Content -->
+<section class="section-content py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Left Column: Profile Summary -->
+            <div class="col-lg-4">
+                <!-- Profile Card -->
+                <div class="card border-0 shadow rounded-4 overflow-hidden mb-4">
+                    <div class="card-body p-0">
+                        <!-- Profile Header -->
+                        <div class="bg-light p-4 text-center">
+                            <div class="position-relative d-inline-block mb-3">
+                                <img src="{{ user_profile.profile_picture.url|default:'/static/images/default-profile.png' }}" 
+                                     alt="Profile Picture" class="rounded-circle img-thumbnail" 
+                                     style="width: 150px; height: 150px; object-fit: cover; border: 5px solid white; box-shadow: 0 0 25px rgba(0,0,0,0.1);">
+                                {% if request.user == user_profile.user %}
+                                <div class="position-absolute bottom-0 end-0">
+                                    <a href="{% url 'update_profile' %}" class="btn btn-sm btn-success rounded-circle" data-bs-toggle="tooltip" title="Edit Profile">
+                                        <span class="d-block" style="width: 20px; height: 20px; line-height: 20px;">✏️</span>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <h3 class="fw-bold">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</h3>
+                            <p class="text-muted mb-0">{{ user_profile.user.email }}</p>
+                        </div>
+                        
+                        <!-- Contact Info -->
+                        <div class="p-4 border-top">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Phone</span>
+                                <span class="fw-medium">{{ user_profile.phone_number|default:"Not provided" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Job Alerts</span>
+                                <span>
+                                    {% if user_profile.job_alert %}
+                                        <span class="badge bg-success">Enabled</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Disabled</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Bio Section -->
+                        <div class="p-4 border-top">
+                            <h5 class="fw-bold mb-3">About Me</h5>
+                            <p class="mb-0">{{ user_profile.bio|default:"No bio provided. Tell employers about yourself!" }}</p>
+                        </div>
+                        
+                        <!-- Skills Section -->
+                        <div class="p-4 border-top">
+                            <h5 class="fw-bold mb-3">Skills</h5>
+                            {% if user_profile.skills.all %}
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for skill in user_profile.skills.all %}
+                                        <span class="badge bg-light text-dark border">{{ skill.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-danger small mb-0">No skills added. Add your skills to stand out to employers.</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Preferred Job -->
+                        <div class="p-4 border-top">
+                            <h5 class="fw-bold mb-3">Job Interests</h5>
+                            <span class="d-block p-2 bg-light rounded text-center">
+                                {{ user_profile.preferred_category.name|default:"No preferred job category selected" }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-8">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0">Profile Details</h4>
-                </div>
-                <div class="card-body">
-                    <p><strong>Bio:</strong> {{ user_profile.bio|default:"Not provided" }}</p>
-                    <p><strong>Education:</strong> 
-                        {% if user_profile.degree and user_profile.institution and user_profile.year %}
-                            {{ user_profile.degree }} from {{ user_profile.institution }} ({{ user_profile.year }})
-                        {% else %}
-                            <span class="text-danger">Education details are incomplete. Please update your profile.</span>
-                        {% endif %}
-                    </p>
-                    
-                    <p><strong>Experience:</strong> 
-                        {% if user_profile.job_title and user_profile.company and user_profile.experience %}
-                            {{ user_profile.job_title }} at {{ user_profile.company }} ({{ user_profile.experience }} years)
-                        {% else %}
-                            <span class="text-danger">Work experience details are incomplete. Please update your profile.</span>
-                        {% endif %}
-                    </p>
-                    
-                    <p><strong>Certifications:</strong> 
-                        {% if user_profile.certifications.all %}
-                            <ul class="list-unstyled">
-                                {% for cert in user_profile.certifications.all %}
-                                    <li><i class="fas fa-certificate text-success"></i> {{ cert.name }} <a href="{{ cert.file.url }}" class="btn btn-sm btn-primary ms-2" download>Download</a></li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <span class="text-danger">No certifications uploaded.</span>
-                        {% endif %}
-                    </p>
-                    <p><strong>Skills:</strong> 
-                        {% if user_profile.skills.all %}
-                            <div class="d-flex flex-wrap">
-                                {% for skill in user_profile.skills.all %}
-                                    <span class="badge bg-success me-2 mb-2">{{ skill.name }}</span>
-                                {% endfor %}
+                
+                <!-- Resume Card -->
+                <div class="card border-0 shadow rounded-4 overflow-hidden">
+                    <div class="card-header bg-white p-4 border-bottom">
+                        <h5 class="fw-bold mb-0">Resume</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if user_profile.resume %}
+                            <div class="text-center">
+                                <div class="bg-light rounded p-4 mb-3">
+                                    <span class="d-block mb-2">{{ user_profile.resume.name }}</span>
+                                    <a href="{{ user_profile.resume.url }}" class="btn btn-success btn-sm px-4 rounded-pill" download>
+                                        Download Resume
+                                    </a>
+                                </div>
+                                <small class="text-muted">Last updated: {{ user_profile.updated_at|date:"F d, Y" }}</small>
                             </div>
                         {% else %}
-                            <span class="text-danger">None selected. Please update your profile.</span>
+                            <div class="text-center py-4">
+                                <div class="mb-3 text-muted">No resume uploaded</div>
+                                {% if request.user == user_profile.user %}
+                                <a href="{% url 'update_profile' %}" class="btn btn-outline-success btn-sm px-4 rounded-pill">
+                                    Upload Now
+                                </a>
+                                {% endif %}
+                            </div>
                         {% endif %}
-                    </p>
-                    <p><strong>Job Alerts:</strong> 
-                        {% if user_profile.job_alerts %}
-                            Enabled for <strong class="text-success">{{ user_profile.job_alert_category.name }}</strong>
-                        {% else %}
-                            <span class="text-danger">Not enabled.</span>
-                        {% endif %}
-                    </p>
+                    </div>
                 </div>
             </div>
-
-            <div class="card mt-3 shadow-lg border-0">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Resume</h5>
-                </div>
-                <div class="card-body">
-                    <h5>Profile Resume</h5>
-                    {% if user_profile.resume %}
-                        <div class="d-flex justify-content-between align-items-center border p-2 rounded">
-                            <p class="mb-0"><i class="fas fa-file-alt text-primary"></i> {{ user_profile.resume.name }}</p>
-                            <a href="{{ user_profile.resume.url }}" class="btn btn-primary btn-sm" download>Download</a>
+            
+            <!-- Right Column: Detailed Information -->
+            <div class="col-lg-8">
+                <!-- Education & Experience Card -->
+                <div class="card border-0 shadow rounded-4 overflow-hidden mb-4">
+                    <div class="card-header p-0 border-0">
+                        <ul class="nav nav-tabs card-header-tabs" id="profileTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active px-4 py-3" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" 
+                                        type="button" role="tab" aria-controls="education" aria-selected="true">Education</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link px-4 py-3" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" 
+                                        type="button" role="tab" aria-controls="experience" aria-selected="false">Experience</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="tab-content" id="profileTabContent">
+                            <!-- Education Tab -->
+                            <div class="tab-pane fade show active p-4" id="education" role="tabpanel" aria-labelledby="education-tab">
+                                <h5 class="fw-bold mb-4">Educational Background</h5>
+                                {% if education_entries %}
+                                    <div class="timeline">
+                                        {% for education in education_entries %}
+                                            <div class="timeline-item mb-4 position-relative ps-4">
+                                                <div class="timeline-marker position-absolute top-0 start-0" style="width: 12px; height: 12px; border-radius: 50%; background-color: #28a745; margin-top: 6px;"></div>
+                                                <div class="timeline-content">
+                                                    <h6 class="fw-bold mb-1">{{ education.degree }}</h6>
+                                                    <p class="mb-1">{{ education.institution }}</p>
+                                                    <span class="badge bg-light text-dark">{{ education.year }}</span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-light border">
+                                        <p class="mb-0 text-center">No education records available. Add your education history to enhance your profile.</p>
+                                        {% if request.user == user_profile.user %}
+                                            <div class="text-center mt-3">
+                                                <a href="{% url 'update_profile' %}" class="btn btn-outline-success btn-sm px-4 rounded-pill">
+                                                    Add Education
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Experience Tab -->
+                            <div class="tab-pane fade p-4" id="experience" role="tabpanel" aria-labelledby="experience-tab">
+                                <h5 class="fw-bold mb-4">Work Experience</h5>
+                                {% if experience_entries %}
+                                    <div class="timeline">
+                                        {% for experience in experience_entries %}
+                                            <div class="timeline-item mb-4 position-relative ps-4">
+                                                <div class="timeline-marker position-absolute top-0 start-0" style="width: 12px; height: 12px; border-radius: 50%; background-color: #28a745; margin-top: 6px;"></div>
+                                                <div class="timeline-content">
+                                                    <h6 class="fw-bold mb-1">{{ experience.job_title }}</h6>
+                                                    <p class="mb-1">{{ experience.company_in }}</p>
+                                                    <span class="badge bg-light text-dark">{{ experience.years }} years</span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-light border">
+                                        <p class="mb-0 text-center">No work experience records available. Add your work history to stand out to employers.</p>
+                                        {% if request.user == user_profile.user %}
+                                            <div class="text-center mt-3">
+                                                <a href="{% url 'update_profile' %}" class="btn btn-outline-success btn-sm px-4 rounded-pill">
+                                                    Add Experience
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                    {% else %}
-                        <p class="text-muted">No resume uploaded.</p>
-                    {% endif %}
+                    </div>
                 </div>
+                
+                <!-- Account Actions -->
+                {% if request.user == user_profile.user %}
+                <div class="card border-0 shadow rounded-4 overflow-hidden">
+                    <div class="card-header p-4 bg-white">
+                        <h5 class="fw-bold mb-0">Account Management</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Profile Actions -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <a href="{% url 'update_profile' %}" class="btn btn-success w-100 py-2">
+                                    Update Profile
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Delete Account -->
+                        <div class="mt-4 pt-4 border-top">
+                            <h5 class="text-danger fw-bold mb-3">Delete Account</h5>
+                            <div class="alert alert-warning">
+                                <p class="mb-0 small">
+                                    By deleting your account, please note that you will need a different email address to create a new profile to apply for jobs in the future on this website. 
+                                    (<strong>{{ user_profile.user.email }}</strong> cannot be used here again).
+                                </p>
+                            </div>
+                            <form method="post" action="{% url 'delete_profile' %}">
+                                {% csrf_token %}
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="terms_confirmation" id="termsConfirmation" required>
+                                    <label class="form-check-label small" for="termsConfirmation">
+                                        You accept our <a href="{% url 'terms_and_conditions' %}" target="_blank" class="text-success">Terms and Conditions</a> and <a href="{% url 'privacy_policy' %}" target="_blank" class="text-success">Privacy Policy</a>.
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-outline-danger">
+                                    Delete My Account
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
-</div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+    
+    // Initialize tabs
+    var triggerTabList = [].slice.call(document.querySelectorAll('#profileTabs button'))
+    triggerTabList.forEach(function (triggerEl) {
+        var tabTrigger = new bootstrap.Tab(triggerEl)
+        triggerEl.addEventListener('click', function (event) {
+            event.preventDefault()
+            tabTrigger.show()
+        })
+    })
+</script>
 {% endblock %}

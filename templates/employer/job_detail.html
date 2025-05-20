@@ -1,13 +1,59 @@
-{% extends 'base.html' %}
 {% block content %}
-<h2>{{ job.title }}</h2>
-<p><strong>Company:</strong> {{ job.company_name }}</p>
-<p><strong>Location:</strong> {{ job.location }}</p>
-<p><strong>Type:</strong> {{ job.get_type_display }}</p>
-<p><strong>Salary:</strong> {{ job.salary }}</p>
-<p><strong>Description:</strong> {{ job.description }}</p>
-<p><strong>Status:</strong> {{ job.status }}</p>
+<div class="container my-3">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Job Title -->
+            <h2 class="display-4 text-center">{{ job.title }}</h2>
 
-<a href="{% url 'edit_job' job.id %}" class="btn btn-primary">Edit</a>
-<a href="{% url 'delete_job' job.id %}" class="btn btn-danger">Delete</a>
+            <div class="row mt-4">
+                <!-- Job Details Section -->
+                <div class="col-md-8">
+                    <div class="card shadow-sm p-4">
+                        <p><strong>Location:</strong> {{ job.location }}</p>
+                        <p><strong>Salary:</strong> {{ job.salary }}</p>
+                        <p><strong>Category:</strong> {{ job.category.name }}</p>
+                        <p><strong>Job Type:</strong> {{ job.type }}</p>
+                        <p><strong>Deadline:</strong> {{ job.deadline_date|date:"F d, Y" }}</p>
+                        <p><strong>Tags:</strong> {{ job.tags.all|join:", " }}</p>
+                    </div>
+
+                    <!-- Job Description Section -->
+                    <div class="card shadow-sm p-4 mt-4">
+                        <h3>Job Description</h3>
+                        <p>{{ job.description|linebreaksbr|escape }}</p> <!-- Display as plain text -->
+                    </div>
+
+                    <!-- Responsibilities and Requirements Sections -->
+                    {% if job.responsibilities %}
+                        <div class="card shadow-sm p-4 mt-4">
+                            <h4>Responsibilities</h4>
+                            <p>{{ job.responsibilities|linebreaksbr|escape }}</p> <!-- Display as plain text -->
+                        </div>
+                    {% endif %}
+
+                    {% if job.requirements %}
+                        <div class="card shadow-sm p-4 mt-4">
+                            <h4>Requirements</h4>
+                            <p>{{ job.requirements|linebreaksbr|escape }}</p> <!-- Display as plain text -->
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Actions Section -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm p-4">
+                        <div class="d-flex justify-content-between">
+                            <!-- Edit Job Button (Green) -->
+                            <a href="{% url 'edit_job' job.id %}" class="btn btn-success btn-md mb-3 w-100 dashboard-load ">Edit Job</a>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <!-- Delete Job Button (Red) -->
+                            <a href="{% url 'delete_job' job.id %}" class="btn btn-danger btn-md dashboard-load w-100">Delete Job</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
